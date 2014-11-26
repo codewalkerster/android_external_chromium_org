@@ -90,7 +90,7 @@ public class AwSettings {
     private boolean mZeroLayoutHeightDisablesViewportQuirk = false;
     private boolean mForceZeroLayoutHeight = false;
     private boolean mLoadWithOverviewMode = false;
-    private boolean mMediaPlaybackRequiresUserGesture = true;
+    private boolean mMediaPlaybackRequiresUserGesture = false;//now we allow video autoplay.
     private String mDefaultVideoPosterURL;
     private float mInitialPageScalePercent = 0;
     private boolean mSpatialNavigationEnabled;  // Default depends on device features.

@@ -159,6 +159,11 @@ class MEDIA_EXPORT MediaPlayerBridge : public MediaPlayerAndroid {
   // Hide url log from media player.
   bool hide_url_log_;
 
+#ifdef ENABLE_CUSTOMIZATION
+  // notify duration extracted from metadata.
+  bool dur_got_from_metadata_;
+#endif
+
   // Stats about the media.
   base::TimeDelta duration_;
   int width_;

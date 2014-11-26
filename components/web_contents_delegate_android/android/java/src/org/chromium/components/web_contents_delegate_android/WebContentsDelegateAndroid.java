@@ -42,6 +42,9 @@ public class WebContentsDelegateAndroid {
     // Initialize to 100 to indicate that we're not in a loading state.
     private int mMostRecentProgress = 100;
 
+    //for full screen;
+    private boolean mInFullScreen = false;
+
     public int getMostRecentProgress() {
         return mMostRecentProgress;
     }
@@ -148,10 +151,13 @@ public class WebContentsDelegateAndroid {
 
     @CalledByNative
     public void toggleFullscreenModeForTab(boolean enterFullscreen) {
+        if (enterFullscreen != mInFullScreen) {
+            mInFullScreen = enterFullscreen;
+        }
     }
 
     @CalledByNative
     public boolean isFullscreenForTabOrPending() {
-        return false;
+        return mInFullScreen;
     }
 }

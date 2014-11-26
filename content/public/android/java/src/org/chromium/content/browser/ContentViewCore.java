@@ -1725,7 +1725,10 @@ public class ContentViewCore
             return mContainerViewInternals.super_dispatchKeyEvent(event);
         }
 
-        if (mImeAdapter.dispatchKeyEvent(event)) return true;
+        if (mImeAdapter.dispatchKeyEvent(event)) {
+            showImeIfNeeded();
+            return true;
+        }
 
         return mContainerViewInternals.super_dispatchKeyEvent(event);
     }

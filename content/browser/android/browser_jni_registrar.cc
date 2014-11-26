@@ -44,7 +44,7 @@
 using content::SurfaceTexturePeerBrowserImpl;
 
 namespace {
-base::android::RegistrationMethod kContentRegisteredMethods[] = {
+static base::android::RegistrationMethod kContentRegisteredMethods[] = {
     {"AndroidLocationApiAdapter",
      content::AndroidLocationApiAdapter::RegisterGeolocationService},
     {"BatteryStatusManager",

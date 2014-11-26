@@ -9,7 +9,8 @@
 #include "content/common/android/hash_set.h"
 
 namespace {
-base::android::RegistrationMethod kContentRegisteredMethods[] = {
+
+static base::android::RegistrationMethod kContentRegisteredMethods[] = {
   { "HashSet", content::RegisterHashSet },
 };
 

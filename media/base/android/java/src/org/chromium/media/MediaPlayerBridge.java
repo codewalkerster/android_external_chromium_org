@@ -27,6 +27,7 @@ import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
+import android.os.PowerManager;
 
 /**
 * A wrapper around android.media.MediaPlayer that allows the native code to use it.
@@ -153,6 +154,7 @@ public class MediaPlayerBridge {
         }
         try {
             getLocalPlayer().setDataSource(context, uri, headersMap);
+            getLocalPlayer().setWakeMode(context, PowerManager.SCREEN_BRIGHT_WAKE_LOCK);
             return true;
         } catch (Exception e) {
             return false;

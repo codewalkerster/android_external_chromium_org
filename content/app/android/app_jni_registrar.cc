@@ -11,7 +11,7 @@
 
 namespace {
 
-base::android::RegistrationMethod kContentRegisteredMethods[] = {
+static base::android::RegistrationMethod kContentRegisteredMethods[] = {
   { "ContentMain", content::RegisterContentMain },
   { "ChildProcessService", content::RegisterChildProcessService },
 };

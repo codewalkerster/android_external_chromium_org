@@ -2818,6 +2818,16 @@ blink::WebString RenderFrameImpl::userAgentOverride(blink::WebLocalFrame* frame,
     return blink::WebString();
   }
 
+#ifdef ENABLE_CUSTOMIZATION
+  /*
+    renderer_preferences_.user_agent_override value is empty string
+    or passed from parent webpage.
+    We need always use it.
+  */
+  return WebString::fromUTF8(
+      render_view_->renderer_preferences_.user_agent_override);
+
+#else
   // If we're in the middle of committing a load, the data source we need
   // will still be provisional.
   WebFrame* main_frame = render_view_->webview()->mainFrame();
@@ -2833,6 +2843,8 @@ blink::WebString RenderFrameImpl::userAgentOverride(blink::WebLocalFrame* frame,
     return WebString::fromUTF8(
         render_view_->renderer_preferences_.user_agent_override);
   return blink::WebString();
+
+#endif
 }
 
 blink::WebString RenderFrameImpl::doNotTrackValue(blink::WebLocalFrame* frame) {

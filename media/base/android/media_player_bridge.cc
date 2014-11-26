@@ -59,6 +59,10 @@ MediaPlayerBridge::MediaPlayerBridge(
       weak_factory_(this) {
   listener_.reset(new MediaPlayerListener(base::MessageLoopProxy::current(),
                                           weak_factory_.GetWeakPtr()));
+
+#ifdef ENABLE_CUSTOMIZATION
+  dur_got_from_metadata_ = false;
+#endif
 }
 
 MediaPlayerBridge::~MediaPlayerBridge() {
@@ -277,6 +281,9 @@ void MediaPlayerBridge::OnMediaMetadataExtracted(
     duration_ = duration;
     width_ = width;
     height_ = height;
+#ifdef ENABLE_CUSTOMIZATION
+    dur_got_from_metadata_ = true;
+#endif
   }
   manager()->OnMediaMetadataChanged(
       player_id(), duration_, width_, height_, success);
@@ -334,7 +341,17 @@ int MediaPlayerBridge::GetVideoHeight() {
 
 void MediaPlayerBridge::SeekTo(base::TimeDelta timestamp) {
   // Record the time to seek when OnMediaPrepared() is called.
+#ifdef ENABLE_CUSTOMIZATION
+  if (!prepared_) {
+    if (timestamp.InSecondsF() >= 0 && pending_seek_.InSecondsF() <= 0) {
+        pending_seek_ = timestamp;
+    }
+  } else {
+    pending_seek_ = timestamp;
+  }
+#else
   pending_seek_ = timestamp;
+#endif
 
   if (j_media_player_bridge_.is_null())
     Prepare();
@@ -424,6 +441,16 @@ void MediaPlayerBridge::OnMediaPrepared() {
 
   prepared_ = true;
   duration_ = GetDuration();
+
+#ifdef ENABLE_CUSTOMIZATION
+  base::TimeDelta dur = duration_;
+  if (duration_ != dur && 0 != dur.InMilliseconds() && !(dur_got_from_metadata_ == false)
+    ) {
+    // Scale the |pending_seek_| according to the new duration.
+    pending_seek_ = base::TimeDelta::FromSeconds(
+        pending_seek_.InSecondsF() * duration_.InSecondsF() / dur.InSecondsF());
+  }
+#endif
 
   // If media player was recovered from a saved state, consume all the pending
   // events.
