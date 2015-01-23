@@ -73,7 +73,8 @@ MediaPlayerAndroid* BrowserMediaPlayerManager::CreateMediaPlayer(
     BrowserDemuxerAndroid* demuxer) {
   switch (media_player_params.type) {
     case MEDIA_PLAYER_TYPE_URL: {
-      const std::string user_agent = GetContentClient()->GetUserAgent();
+      // Use web content UserAgentOverride is right
+      const std::string user_agent = web_contents()->GetUserAgentOverride();
       MediaPlayerBridge* media_player_bridge = new MediaPlayerBridge(
           media_player_params.player_id,
           media_player_params.url,
