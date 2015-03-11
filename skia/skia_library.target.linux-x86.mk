@@ -5,15 +5,13 @@ include $(CLEAR_VARS)
 LOCAL_MODULE_CLASS := STATIC_LIBRARIES
 LOCAL_MODULE := skia_skia_library_gyp
 LOCAL_MODULE_SUFFIX := .a
-LOCAL_MODULE_TAGS := optional
 LOCAL_MODULE_TARGET_ARCH := $(TARGET_$(GYP_VAR_PREFIX)ARCH)
 gyp_intermediate_dir := $(call local-intermediates-dir,,$(GYP_VAR_PREFIX))
 gyp_shared_intermediate_dir := $(call intermediates-dir-for,GYP,shared,,,$(GYP_VAR_PREFIX))
 
 # Make sure our deps are built first.
 GYP_TARGET_DEPENDENCIES := \
-	$(call intermediates-dir-for,GYP,third_party_WebKit_public_blink_skia_config_gyp,,,$(GYP_VAR_PREFIX))/blink_skia_config.stamp \
-	$(call intermediates-dir-for,GYP,third_party_expat_expat_gyp,,,$(GYP_VAR_PREFIX))/expat.stamp
+	$(call intermediates-dir-for,GYP,third_party_WebKit_public_blink_skia_config_gyp,,,$(GYP_VAR_PREFIX))/blink_skia_config.stamp
 
 GYP_GENERATED_OUTPUTS :=
 
@@ -26,17 +24,15 @@ GYP_COPIED_SOURCE_ORIGIN_DIRS :=
 
 LOCAL_SRC_FILES := \
 	third_party/skia/src/core/SkFlate.cpp \
-	third_party/skia/src/core/SkPaintOptionsAndroid.cpp \
 	third_party/skia/src/ports/SkImageDecoder_empty.cpp \
 	third_party/skia/src/images/SkScaledBitmapSampler.cpp \
 	third_party/skia/src/opts/opts_check_x86.cpp \
-	third_party/skia/src/ports/SkFontConfigInterface_android.cpp \
-	third_party/skia/src/ports/SkFontHost_fontconfig.cpp \
 	third_party/skia/src/fonts/SkFontMgr_indirect.cpp \
 	third_party/skia/src/fonts/SkRemotableFontMgr.cpp \
 	third_party/skia/src/ports/SkFontHost_FreeType.cpp \
 	third_party/skia/src/ports/SkFontHost_FreeType_common.cpp \
 	third_party/skia/src/ports/SkFontConfigParser_android.cpp \
+	third_party/skia/src/ports/SkFontMgr_android.cpp \
 	third_party/skia/src/ports/SkGlobalInitialization_chromium.cpp \
 	third_party/skia/src/ports/SkOSFile_posix.cpp \
 	third_party/skia/src/ports/SkOSFile_stdio.cpp \
@@ -55,6 +51,7 @@ LOCAL_SRC_FILES := \
 	third_party/skia/src/core/SkBBoxRecord.cpp \
 	third_party/skia/src/core/SkBBoxHierarchyRecord.cpp \
 	third_party/skia/src/core/SkBitmap.cpp \
+	third_party/skia/src/core/SkBitmapCache.cpp \
 	third_party/skia/src/core/SkBitmapDevice.cpp \
 	third_party/skia/src/core/SkBitmapFilter.cpp \
 	third_party/skia/src/core/SkBitmapHeap.cpp \
@@ -124,9 +121,10 @@ LOCAL_SRC_FILES := \
 	third_party/skia/src/core/SkMaskGamma.cpp \
 	third_party/skia/src/core/SkMath.cpp \
 	third_party/skia/src/core/SkMatrix.cpp \
-	third_party/skia/src/core/SkMatrixClipStateMgr.cpp \
 	third_party/skia/src/core/SkMetaData.cpp \
+	third_party/skia/src/core/SkMiniData.cpp \
 	third_party/skia/src/core/SkMipMap.cpp \
+	third_party/skia/src/core/SkMultiPictureDraw.cpp \
 	third_party/skia/src/core/SkPackBits.cpp \
 	third_party/skia/src/core/SkPaint.cpp \
 	third_party/skia/src/core/SkPaintPriv.cpp \
@@ -136,6 +134,8 @@ LOCAL_SRC_FILES := \
 	third_party/skia/src/core/SkPathMeasure.cpp \
 	third_party/skia/src/core/SkPathRef.cpp \
 	third_party/skia/src/core/SkPicture.cpp \
+	third_party/skia/src/core/SkPictureContentInfo.cpp \
+	third_party/skia/src/core/SkPictureData.cpp \
 	third_party/skia/src/core/SkPictureFlat.cpp \
 	third_party/skia/src/core/SkPicturePlayback.cpp \
 	third_party/skia/src/core/SkPictureRecord.cpp \
@@ -147,7 +147,6 @@ LOCAL_SRC_FILES := \
 	third_party/skia/src/core/SkProcSpriteBlitter.cpp \
 	third_party/skia/src/core/SkPtrRecorder.cpp \
 	third_party/skia/src/core/SkQuadClipper.cpp \
-	third_party/skia/src/core/SkQuadTree.cpp \
 	third_party/skia/src/core/SkRasterClip.cpp \
 	third_party/skia/src/core/SkRasterizer.cpp \
 	third_party/skia/src/core/SkReadBuffer.cpp \
@@ -159,9 +158,9 @@ LOCAL_SRC_FILES := \
 	third_party/skia/src/core/SkRefDict.cpp \
 	third_party/skia/src/core/SkRegion.cpp \
 	third_party/skia/src/core/SkRegion_path.cpp \
+	third_party/skia/src/core/SkResourceCache.cpp \
 	third_party/skia/src/core/SkRRect.cpp \
 	third_party/skia/src/core/SkRTree.cpp \
-	third_party/skia/src/core/SkScaledImageCache.cpp \
 	third_party/skia/src/core/SkScalar.cpp \
 	third_party/skia/src/core/SkScalerContext.cpp \
 	third_party/skia/src/core/SkScan.cpp \
@@ -178,6 +177,7 @@ LOCAL_SRC_FILES := \
 	third_party/skia/src/core/SkStroke.cpp \
 	third_party/skia/src/core/SkStrokeRec.cpp \
 	third_party/skia/src/core/SkStrokerPriv.cpp \
+	third_party/skia/src/core/SkTextBlob.cpp \
 	third_party/skia/src/core/SkTileGrid.cpp \
 	third_party/skia/src/core/SkTLS.cpp \
 	third_party/skia/src/core/SkTSearch.cpp \
@@ -193,7 +193,6 @@ LOCAL_SRC_FILES := \
 	third_party/skia/src/doc/SkDocument.cpp \
 	third_party/skia/src/image/SkImage.cpp \
 	third_party/skia/src/image/SkImagePriv.cpp \
-	third_party/skia/src/image/SkImage_Codec.cpp \
 	third_party/skia/src/image/SkImage_Raster.cpp \
 	third_party/skia/src/image/SkSurface.cpp \
 	third_party/skia/src/image/SkSurface_Raster.cpp \
@@ -223,6 +222,7 @@ LOCAL_SRC_FILES := \
 	third_party/skia/src/pathops/SkPathOpsQuad.cpp \
 	third_party/skia/src/pathops/SkPathOpsRect.cpp \
 	third_party/skia/src/pathops/SkPathOpsSimplify.cpp \
+	third_party/skia/src/pathops/SkPathOpsTightBounds.cpp \
 	third_party/skia/src/pathops/SkPathOpsTriangle.cpp \
 	third_party/skia/src/pathops/SkPathOpsTypes.cpp \
 	third_party/skia/src/pathops/SkPathWriter.cpp \
@@ -233,7 +233,6 @@ LOCAL_SRC_FILES := \
 	third_party/skia/src/effects/SkAlphaThresholdFilter.cpp \
 	third_party/skia/src/effects/SkArithmeticMode.cpp \
 	third_party/skia/src/effects/SkAvoidXfermode.cpp \
-	third_party/skia/src/effects/SkBicubicImageFilter.cpp \
 	third_party/skia/src/effects/SkBitmapSource.cpp \
 	third_party/skia/src/effects/SkBlurDrawLooper.cpp \
 	third_party/skia/src/effects/SkBlurMask.cpp \
@@ -268,7 +267,6 @@ LOCAL_SRC_FILES := \
 	third_party/skia/src/effects/SkPixelXorXfermode.cpp \
 	third_party/skia/src/effects/SkPorterDuff.cpp \
 	third_party/skia/src/effects/SkRectShaderImageFilter.cpp \
-	third_party/skia/src/effects/SkStippleMaskFilter.cpp \
 	third_party/skia/src/effects/SkTableColorFilter.cpp \
 	third_party/skia/src/effects/SkTableMaskFilter.cpp \
 	third_party/skia/src/effects/SkTestImageFilters.cpp \
@@ -276,8 +274,8 @@ LOCAL_SRC_FILES := \
 	third_party/skia/src/effects/SkMatrixImageFilter.cpp \
 	third_party/skia/src/effects/SkTransparentShader.cpp \
 	third_party/skia/src/effects/SkXfermodeImageFilter.cpp \
-	third_party/skia/src/effects/gradients/SkBitmapCache.cpp \
 	third_party/skia/src/effects/gradients/SkClampRange.cpp \
+	third_party/skia/src/effects/gradients/SkGradientBitmapCache.cpp \
 	third_party/skia/src/effects/gradients/SkGradientShader.cpp \
 	third_party/skia/src/effects/gradients/SkLinearGradient.cpp \
 	third_party/skia/src/effects/gradients/SkRadialGradient.cpp \
@@ -311,9 +309,15 @@ LOCAL_SRC_FILES := \
 	third_party/skia/src/utils/SkNWayCanvas.cpp \
 	third_party/skia/src/utils/SkNullCanvas.cpp \
 	third_party/skia/src/utils/SkPictureUtils.cpp \
+	third_party/skia/src/utils/SkPatchGrid.cpp \
+	third_party/skia/src/utils/SkPatchUtils.cpp \
 	third_party/skia/src/utils/SkProxyCanvas.cpp \
 	third_party/skia/src/utils/SkRTConf.cpp \
 	third_party/skia/src/utils/SkTextureCompressor.cpp \
+	third_party/skia/src/utils/SkTextureCompressor_ASTC.cpp \
+	third_party/skia/src/utils/SkTextureCompressor_R11EAC.cpp \
+	third_party/skia/src/utils/SkTextureCompressor_LATC.cpp \
+	third_party/skia/src/fonts/SkTestScalerContext.cpp \
 	third_party/skia/src/gpu/gl/GrGLCreateNullInterface.cpp \
 	third_party/skia/src/gpu/gl/SkNullGLContext.cpp \
 	third_party/skia/src/gpu/GrAAHairLinePathRenderer.cpp \
@@ -325,37 +329,47 @@ LOCAL_SRC_FILES := \
 	third_party/skia/src/gpu/GrBitmapTextContext.cpp \
 	third_party/skia/src/gpu/GrBlend.cpp \
 	third_party/skia/src/gpu/GrBufferAllocPool.cpp \
-	third_party/skia/src/gpu/GrCacheable.cpp \
 	third_party/skia/src/gpu/GrCacheID.cpp \
 	third_party/skia/src/gpu/GrClipData.cpp \
+	third_party/skia/src/gpu/GrClipMaskCache.cpp \
+	third_party/skia/src/gpu/GrClipMaskManager.cpp \
 	third_party/skia/src/gpu/GrContext.cpp \
 	third_party/skia/src/gpu/GrDefaultPathRenderer.cpp \
 	third_party/skia/src/gpu/GrDistanceFieldTextContext.cpp \
 	third_party/skia/src/gpu/GrDrawState.cpp \
 	third_party/skia/src/gpu/GrDrawTarget.cpp \
-	third_party/skia/src/gpu/GrEffect.cpp \
-	third_party/skia/src/gpu/GrClipMaskCache.cpp \
-	third_party/skia/src/gpu/GrClipMaskManager.cpp \
+	third_party/skia/src/gpu/GrFontScaler.cpp \
 	third_party/skia/src/gpu/GrGpu.cpp \
-	third_party/skia/src/gpu/GrGpuObject.cpp \
+	third_party/skia/src/gpu/GrGpuResource.cpp \
 	third_party/skia/src/gpu/GrGpuFactory.cpp \
 	third_party/skia/src/gpu/GrInOrderDrawBuffer.cpp \
 	third_party/skia/src/gpu/GrLayerCache.cpp \
+	third_party/skia/src/gpu/GrLayerHoister.cpp \
 	third_party/skia/src/gpu/GrMemoryPool.cpp \
+	third_party/skia/src/gpu/GrOptDrawState.cpp \
 	third_party/skia/src/gpu/GrOvalRenderer.cpp \
 	third_party/skia/src/gpu/GrPaint.cpp \
 	third_party/skia/src/gpu/GrPath.cpp \
+	third_party/skia/src/gpu/GrPathRange.cpp \
 	third_party/skia/src/gpu/GrPathRendererChain.cpp \
 	third_party/skia/src/gpu/GrPathRenderer.cpp \
+	third_party/skia/src/gpu/GrPathRendering.cpp \
 	third_party/skia/src/gpu/GrPathUtils.cpp \
+	third_party/skia/src/gpu/GrProgramElement.cpp \
+	third_party/skia/src/gpu/GrProcessor.cpp \
+	third_party/skia/src/gpu/GrGpuResourceRef.cpp \
 	third_party/skia/src/gpu/GrPictureUtils.cpp \
+	third_party/skia/src/gpu/GrRecordReplaceDraw.cpp \
 	third_party/skia/src/gpu/GrRectanizer_pow2.cpp \
 	third_party/skia/src/gpu/GrRectanizer_skyline.cpp \
 	third_party/skia/src/gpu/GrRenderTarget.cpp \
 	third_party/skia/src/gpu/GrReducedClip.cpp \
 	third_party/skia/src/gpu/GrResourceCache.cpp \
+	third_party/skia/src/gpu/GrResourceCache2.cpp \
+	third_party/skia/src/gpu/GrRODrawState.cpp \
 	third_party/skia/src/gpu/GrStencil.cpp \
 	third_party/skia/src/gpu/GrStencilAndCoverPathRenderer.cpp \
+	third_party/skia/src/gpu/GrStencilAndCoverTextContext.cpp \
 	third_party/skia/src/gpu/GrStencilBuffer.cpp \
 	third_party/skia/src/gpu/GrTraceMarker.cpp \
 	third_party/skia/src/gpu/GrSWMaskHelper.cpp \
@@ -374,12 +388,14 @@ LOCAL_SRC_FILES := \
 	third_party/skia/src/gpu/effects/GrDashingEffect.cpp \
 	third_party/skia/src/gpu/effects/GrDistanceFieldTextureEffect.cpp \
 	third_party/skia/src/gpu/effects/GrDitherEffect.cpp \
+	third_party/skia/src/gpu/effects/GrMatrixConvolutionEffect.cpp \
 	third_party/skia/src/gpu/effects/GrOvalEffect.cpp \
 	third_party/skia/src/gpu/effects/GrRRectEffect.cpp \
 	third_party/skia/src/gpu/effects/GrSimpleTextureEffect.cpp \
 	third_party/skia/src/gpu/effects/GrSingleTextureEffect.cpp \
 	third_party/skia/src/gpu/effects/GrTextureDomain.cpp \
 	third_party/skia/src/gpu/effects/GrTextureStripAtlas.cpp \
+	third_party/skia/src/gpu/effects/GrYUVtoRGBEffect.cpp \
 	third_party/skia/src/gpu/gl/GrGLAssembleInterface.cpp \
 	third_party/skia/src/gpu/gl/GrGLBufferImpl.cpp \
 	third_party/skia/src/gpu/gl/GrGLCaps.cpp \
@@ -392,23 +408,32 @@ LOCAL_SRC_FILES := \
 	third_party/skia/src/gpu/gl/GrGLNameAllocator.cpp \
 	third_party/skia/src/gpu/gl/GrGLNoOpInterface.cpp \
 	third_party/skia/src/gpu/gl/GrGLPath.cpp \
+	third_party/skia/src/gpu/gl/GrGLPathRange.cpp \
+	third_party/skia/src/gpu/gl/GrGLPathRendering.cpp \
 	third_party/skia/src/gpu/gl/GrGLProgram.cpp \
 	third_party/skia/src/gpu/gl/GrGLProgramDesc.cpp \
 	third_party/skia/src/gpu/gl/GrGLProgramEffects.cpp \
+	third_party/skia/src/gpu/gl/GrGLProgramDataManager.cpp \
 	third_party/skia/src/gpu/gl/GrGLRenderTarget.cpp \
-	third_party/skia/src/gpu/gl/GrGLShaderBuilder.cpp \
 	third_party/skia/src/gpu/gl/GrGLSL.cpp \
 	third_party/skia/src/gpu/gl/GrGLStencilBuffer.cpp \
 	third_party/skia/src/gpu/gl/GrGLTexture.cpp \
 	third_party/skia/src/gpu/gl/GrGLUtil.cpp \
-	third_party/skia/src/gpu/gl/GrGLUniformManager.cpp \
 	third_party/skia/src/gpu/gl/GrGLVertexArray.cpp \
 	third_party/skia/src/gpu/gl/GrGLVertexBuffer.cpp \
 	third_party/skia/src/gpu/gl/GrGpuGL.cpp \
 	third_party/skia/src/gpu/gl/GrGpuGL_program.cpp \
+	third_party/skia/src/gpu/gl/builders/GrGLSLPrettyPrint.cpp \
+	third_party/skia/src/gpu/gl/builders/GrGLShaderBuilder.cpp \
+	third_party/skia/src/gpu/gl/builders/GrGLFragmentOnlyProgramBuilder.cpp \
+	third_party/skia/src/gpu/gl/builders/GrGLFullProgramBuilder.cpp \
+	third_party/skia/src/gpu/gl/builders/GrGLProgramBuilder.cpp \
+	third_party/skia/src/gpu/gl/builders/GrGLShaderStringBuilder.cpp \
+	third_party/skia/src/gpu/gl/builders/GrGLVertexShaderBuilder.cpp \
+	third_party/skia/src/gpu/gl/builders/GrGLFragmentShaderBuilder.cpp \
+	third_party/skia/src/gpu/gl/builders/GrGLGeometryShaderBuilder.cpp \
 	third_party/skia/src/gpu/SkGpuDevice.cpp \
 	third_party/skia/src/gpu/SkGr.cpp \
-	third_party/skia/src/gpu/SkGrFontScaler.cpp \
 	third_party/skia/src/gpu/SkGrPixelRef.cpp \
 	third_party/skia/src/gpu/SkGrTexturePixelRef.cpp \
 	third_party/skia/src/image/SkImage_Gpu.cpp \
@@ -419,7 +444,6 @@ LOCAL_SRC_FILES := \
 # Flags passed to both C and C++ files.
 MY_CFLAGS_Debug := \
 	--param=ssp-buffer-size=4 \
-	-fno-exceptions \
 	-fno-strict-aliasing \
 	-Wno-unused-parameter \
 	-Wno-missing-field-initializers \
@@ -450,6 +474,7 @@ MY_CFLAGS_Debug := \
 	-Wno-sequence-point \
 	-Os \
 	-g \
+	-gdwarf-4 \
 	-fdata-sections \
 	-ffunction-sections \
 	-fomit-frame-pointer \
@@ -457,7 +482,6 @@ MY_CFLAGS_Debug := \
 
 MY_DEFS_Debug := \
 	'-DV8_DEPRECATION_WARNINGS' \
-	'-DBLINK_SCALE_FILTERS_AT_RECORD_TIME' \
 	'-D_FILE_OFFSET_BITS=64' \
 	'-DNO_TCMALLOC' \
 	'-DDISABLE_NACL' \
@@ -474,11 +498,13 @@ MY_DEFS_Debug := \
 	'-DENABLE_PRINTING=1' \
 	'-DENABLE_MANAGED_USERS=1' \
 	'-DDATA_REDUCTION_FALLBACK_HOST="http://compress.googlezip.net:80/"' \
-	'-DDATA_REDUCTION_DEV_HOST="http://proxy-dev.googlezip.net:80/"' \
+	'-DDATA_REDUCTION_DEV_HOST="https://proxy-dev.googlezip.net:443/"' \
+	'-DDATA_REDUCTION_DEV_FALLBACK_HOST="http://proxy-dev.googlezip.net:80/"' \
 	'-DSPDY_PROXY_AUTH_ORIGIN="https://proxy.googlezip.net:443/"' \
 	'-DDATA_REDUCTION_PROXY_PROBE_URL="http://check.googlezip.net/connect"' \
 	'-DDATA_REDUCTION_PROXY_WARMUP_URL="http://www.gstatic.com/generate_204"' \
 	'-DVIDEO_HOLE=1' \
+	'-DENABLE_LOAD_COMPLETION_HACKS=1' \
 	'-DSK_ENABLE_INST_COUNT=0' \
 	'-DSK_SUPPORT_GPU=1' \
 	'-DGR_GL_CUSTOM_SETUP_HEADER="GrGLConfig_chrome.h"' \
@@ -486,30 +512,22 @@ MY_DEFS_Debug := \
 	'-DSK_ATTR_DEPRECATED=SK_NOTHING_ARG1' \
 	'-DGR_GL_IGNORE_ES3_MSAA=0' \
 	'-DSK_WILL_NEVER_DRAW_PERSPECTIVE_TEXT' \
-	'-DSK_SUPPORT_LEGACY_GETTOPDEVICE' \
-	'-DSK_SUPPORT_LEGACY_BITMAP_CONFIG' \
-	'-DSK_SUPPORT_LEGACY_DEVICE_VIRTUAL_ISOPAQUE' \
-	'-DSK_SUPPORT_LEGACY_N32_NAME' \
-	'-DSK_SUPPORT_LEGACY_SETCONFIG' \
-	'-DSK_IGNORE_ETC1_SUPPORT' \
-	'-DSK_IGNORE_GPU_DITHER' \
-	'-DSK_SUPPORT_LEGACY_GETTOTALCLIP' \
+	'-DSK_SUPPORT_LEGACY_TEXTRENDERMODE' \
 	'-DSK_BUILD_FOR_ANDROID' \
 	'-DSK_ALLOW_STATIC_GLOBAL_INITIALIZERS=0' \
 	'-DSK_DISABLE_OFFSETIMAGEFILTER_OPTIMIZATION' \
-	'-DSK_DISABLE_PIXELREF_LOCKCOUNT_BALANCE_CHECK' \
 	'-DIGNORE_ROT_AA_RECT_OPT' \
 	'-DSK_IGNORE_BLURRED_RRECT_OPT' \
-	'-DSK_IGNORE_QUAD_RR_CORNERS_OPT' \
 	'-DSK_GDI_ALWAYS_USE_TEXTMETRICS_FOR_FONT_METRICS' \
 	'-DSK_DEFAULT_FONT_CACHE_LIMIT=(1*1024*1024)' \
 	'-DSK_USE_DISCARDABLE_SCALEDIMAGECACHE' \
-	'-DSK_FONTHOST_DOES_NOT_USE_FONTMGR' \
 	'-DSK_GAMMA_APPLY_TO_A8' \
 	'-DSK_GAMMA_EXPONENT=1.4' \
 	'-DSK_GAMMA_CONTRAST=0.0' \
 	'-DSK_USE_POSIX_THREADS' \
 	'-DSK_DEFERRED_CANVAS_USES_FACTORIES=1' \
+	'-DSK_FM_NEW_MATCH_FAMILY_STYLE_CHARACTER=1' \
+	'-DXML_STATIC' \
 	'-DUSE_OPENSSL=1' \
 	'-DUSE_OPENSSL_CERTS=1' \
 	'-DANDROID' \
@@ -549,7 +567,6 @@ LOCAL_C_INCLUDES_Debug := \
 	$(LOCAL_PATH)/third_party/skia/src/gpu \
 	$(LOCAL_PATH)/third_party/expat/files/lib \
 	$(LOCAL_PATH)/third_party/zlib \
-	$(PWD)/external/expat/lib \
 	$(LOCAL_PATH)/third_party/freetype/include \
 	$(PWD)/frameworks/wilhelm/include \
 	$(PWD)/bionic \
@@ -558,21 +575,22 @@ LOCAL_C_INCLUDES_Debug := \
 
 # Flags passed to only C++ (and not C) files.
 LOCAL_CPPFLAGS_Debug := \
+	-fno-exceptions \
 	-fno-rtti \
 	-fno-threadsafe-statics \
 	-fvisibility-inlines-hidden \
 	-Wno-deprecated \
+	-std=gnu++11 \
+	-Wno-narrowing \
+	-Wno-literal-suffix \
 	-Wno-non-virtual-dtor \
 	-Wno-sign-promo \
 	-Wno-non-virtual-dtor
 
 
-LOCAL_FDO_SUPPORT_Debug := false
-
 # Flags passed to both C and C++ files.
 MY_CFLAGS_Release := \
 	--param=ssp-buffer-size=4 \
-	-fno-exceptions \
 	-fno-strict-aliasing \
 	-Wno-unused-parameter \
 	-Wno-missing-field-initializers \
@@ -601,16 +619,15 @@ MY_CFLAGS_Release := \
 	-Wno-format-security \
 	-Wno-return-type \
 	-Wno-sequence-point \
-	-Os \
 	-fno-ident \
 	-fdata-sections \
 	-ffunction-sections \
 	-fomit-frame-pointer \
-	-funwind-tables
+	-funwind-tables \
+	-O2
 
 MY_DEFS_Release := \
 	'-DV8_DEPRECATION_WARNINGS' \
-	'-DBLINK_SCALE_FILTERS_AT_RECORD_TIME' \
 	'-D_FILE_OFFSET_BITS=64' \
 	'-DNO_TCMALLOC' \
 	'-DDISABLE_NACL' \
@@ -627,11 +644,13 @@ MY_DEFS_Release := \
 	'-DENABLE_PRINTING=1' \
 	'-DENABLE_MANAGED_USERS=1' \
 	'-DDATA_REDUCTION_FALLBACK_HOST="http://compress.googlezip.net:80/"' \
-	'-DDATA_REDUCTION_DEV_HOST="http://proxy-dev.googlezip.net:80/"' \
+	'-DDATA_REDUCTION_DEV_HOST="https://proxy-dev.googlezip.net:443/"' \
+	'-DDATA_REDUCTION_DEV_FALLBACK_HOST="http://proxy-dev.googlezip.net:80/"' \
 	'-DSPDY_PROXY_AUTH_ORIGIN="https://proxy.googlezip.net:443/"' \
 	'-DDATA_REDUCTION_PROXY_PROBE_URL="http://check.googlezip.net/connect"' \
 	'-DDATA_REDUCTION_PROXY_WARMUP_URL="http://www.gstatic.com/generate_204"' \
 	'-DVIDEO_HOLE=1' \
+	'-DENABLE_LOAD_COMPLETION_HACKS=1' \
 	'-DSK_ENABLE_INST_COUNT=0' \
 	'-DSK_SUPPORT_GPU=1' \
 	'-DGR_GL_CUSTOM_SETUP_HEADER="GrGLConfig_chrome.h"' \
@@ -639,30 +658,22 @@ MY_DEFS_Release := \
 	'-DSK_ATTR_DEPRECATED=SK_NOTHING_ARG1' \
 	'-DGR_GL_IGNORE_ES3_MSAA=0' \
 	'-DSK_WILL_NEVER_DRAW_PERSPECTIVE_TEXT' \
-	'-DSK_SUPPORT_LEGACY_GETTOPDEVICE' \
-	'-DSK_SUPPORT_LEGACY_BITMAP_CONFIG' \
-	'-DSK_SUPPORT_LEGACY_DEVICE_VIRTUAL_ISOPAQUE' \
-	'-DSK_SUPPORT_LEGACY_N32_NAME' \
-	'-DSK_SUPPORT_LEGACY_SETCONFIG' \
-	'-DSK_IGNORE_ETC1_SUPPORT' \
-	'-DSK_IGNORE_GPU_DITHER' \
-	'-DSK_SUPPORT_LEGACY_GETTOTALCLIP' \
+	'-DSK_SUPPORT_LEGACY_TEXTRENDERMODE' \
 	'-DSK_BUILD_FOR_ANDROID' \
 	'-DSK_ALLOW_STATIC_GLOBAL_INITIALIZERS=0' \
 	'-DSK_DISABLE_OFFSETIMAGEFILTER_OPTIMIZATION' \
-	'-DSK_DISABLE_PIXELREF_LOCKCOUNT_BALANCE_CHECK' \
 	'-DIGNORE_ROT_AA_RECT_OPT' \
 	'-DSK_IGNORE_BLURRED_RRECT_OPT' \
-	'-DSK_IGNORE_QUAD_RR_CORNERS_OPT' \
 	'-DSK_GDI_ALWAYS_USE_TEXTMETRICS_FOR_FONT_METRICS' \
 	'-DSK_DEFAULT_FONT_CACHE_LIMIT=(1*1024*1024)' \
 	'-DSK_USE_DISCARDABLE_SCALEDIMAGECACHE' \
-	'-DSK_FONTHOST_DOES_NOT_USE_FONTMGR' \
 	'-DSK_GAMMA_APPLY_TO_A8' \
 	'-DSK_GAMMA_EXPONENT=1.4' \
 	'-DSK_GAMMA_CONTRAST=0.0' \
 	'-DSK_USE_POSIX_THREADS' \
 	'-DSK_DEFERRED_CANVAS_USES_FACTORIES=1' \
+	'-DSK_FM_NEW_MATCH_FAMILY_STYLE_CHARACTER=1' \
+	'-DXML_STATIC' \
 	'-DUSE_OPENSSL=1' \
 	'-DUSE_OPENSSL_CERTS=1' \
 	'-DANDROID' \
@@ -702,7 +713,6 @@ LOCAL_C_INCLUDES_Release := \
 	$(LOCAL_PATH)/third_party/skia/src/gpu \
 	$(LOCAL_PATH)/third_party/expat/files/lib \
 	$(LOCAL_PATH)/third_party/zlib \
-	$(PWD)/external/expat/lib \
 	$(LOCAL_PATH)/third_party/freetype/include \
 	$(PWD)/frameworks/wilhelm/include \
 	$(PWD)/bionic \
@@ -711,67 +721,31 @@ LOCAL_C_INCLUDES_Release := \
 
 # Flags passed to only C++ (and not C) files.
 LOCAL_CPPFLAGS_Release := \
+	-fno-exceptions \
 	-fno-rtti \
 	-fno-threadsafe-statics \
 	-fvisibility-inlines-hidden \
 	-Wno-deprecated \
+	-std=gnu++11 \
+	-Wno-narrowing \
+	-Wno-literal-suffix \
 	-Wno-non-virtual-dtor \
 	-Wno-sign-promo \
 	-Wno-non-virtual-dtor
 
 
-LOCAL_FDO_SUPPORT_Release := true
-
 LOCAL_CFLAGS := $(MY_CFLAGS_$(GYP_CONFIGURATION)) $(MY_DEFS_$(GYP_CONFIGURATION))
-LOCAL_FDO_SUPPORT := $(LOCAL_FDO_SUPPORT_$(GYP_CONFIGURATION))
 LOCAL_C_INCLUDES := $(GYP_COPIED_SOURCE_ORIGIN_DIRS) $(LOCAL_C_INCLUDES_$(GYP_CONFIGURATION))
 LOCAL_CPPFLAGS := $(LOCAL_CPPFLAGS_$(GYP_CONFIGURATION))
 LOCAL_ASFLAGS := $(LOCAL_CFLAGS)
 ### Rules for final target.
 
-LOCAL_LDFLAGS_Debug := \
-	-Wl,-z,now \
-	-Wl,-z,relro \
-	-Wl,--fatal-warnings \
-	-Wl,-z,noexecstack \
-	-fPIC \
-	-m32 \
-	-fuse-ld=gold \
-	-nostdlib \
-	-Wl,--no-undefined \
-	-Wl,--exclude-libs=ALL \
-	-Wl,--warn-shared-textrel \
-	-Wl,-O1 \
-	-Wl,--as-needed
-
-
-LOCAL_LDFLAGS_Release := \
-	-Wl,-z,now \
-	-Wl,-z,relro \
-	-Wl,--fatal-warnings \
-	-Wl,-z,noexecstack \
-	-fPIC \
-	-m32 \
-	-fuse-ld=gold \
-	-nostdlib \
-	-Wl,--no-undefined \
-	-Wl,--exclude-libs=ALL \
-	-Wl,-O1 \
-	-Wl,--as-needed \
-	-Wl,--gc-sections \
-	-Wl,--warn-shared-textrel
-
-
-LOCAL_LDFLAGS := $(LOCAL_LDFLAGS_$(GYP_CONFIGURATION))
-
-LOCAL_STATIC_LIBRARIES :=
-
-# Enable grouping to fix circular references
-LOCAL_GROUP_STATIC_LIBRARIES := true
-
 LOCAL_SHARED_LIBRARIES := \
 	libstlport \
 	libdl
+
+### Set directly by aosp_build_settings.
+LOCAL_FDO_SUPPORT := true
 
 # Add target alias to "gyp_all_modules" target.
 .PHONY: gyp_all_modules

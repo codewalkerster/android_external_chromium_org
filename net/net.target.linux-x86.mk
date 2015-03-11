@@ -5,7 +5,6 @@ include $(CLEAR_VARS)
 LOCAL_MODULE_CLASS := STATIC_LIBRARIES
 LOCAL_MODULE := net_net_gyp
 LOCAL_MODULE_SUFFIX := .a
-LOCAL_MODULE_TAGS := optional
 LOCAL_MODULE_TARGET_ARCH := $(TARGET_$(GYP_VAR_PREFIX)ARCH)
 gyp_intermediate_dir := $(call local-intermediates-dir,,$(GYP_VAR_PREFIX))
 gyp_shared_intermediate_dir := $(call intermediates-dir-for,GYP,shared,,,$(GYP_VAR_PREFIX))
@@ -55,6 +54,8 @@ LOCAL_SRC_FILES := \
 	net/cert/cert_status_flags.cc \
 	net/cert/cert_verifier.cc \
 	net/cert/cert_verify_result.cc \
+	net/cert/crl_set.cc \
+	net/cert/ct_verify_result.cc \
 	net/cert/pem_tokenizer.cc \
 	net/cert/signed_certificate_timestamp.cc \
 	net/cert/single_request_cert_verifier.cc \
@@ -78,20 +79,20 @@ LOCAL_SRC_FILES := \
 	net/socket/client_socket_handle.cc \
 	net/socket/client_socket_pool_histograms.cc \
 	net/socket/next_proto.cc \
-	net/socket/openssl_ssl_util.cc \
 	net/socket/ssl_client_socket.cc \
 	net/socket/ssl_client_socket_openssl.cc \
 	net/socket/ssl_client_socket_pool.cc \
-	net/socket/ssl_error_params.cc \
 	net/socket/ssl_session_cache_openssl.cc \
-	net/ssl/default_server_bound_cert_store.cc \
+	net/ssl/channel_id_service.cc \
+	net/ssl/channel_id_store.cc \
+	net/ssl/default_channel_id_store.cc \
 	net/ssl/openssl_client_key_store.cc \
-	net/ssl/server_bound_cert_service.cc \
-	net/ssl/server_bound_cert_store.cc \
+	net/ssl/openssl_ssl_util.cc \
 	net/ssl/signed_certificate_timestamp_and_status.cc \
 	net/ssl/ssl_cert_request_info.cc \
 	net/ssl/ssl_client_auth_cache.cc \
 	net/ssl/ssl_config.cc \
+	net/ssl/ssl_config_service.cc \
 	net/ssl/ssl_info.cc \
 	net/android/cert_verify_result_android.cc \
 	net/android/gurl_utils.cc \
@@ -134,16 +135,16 @@ LOCAL_SRC_FILES := \
 	net/base/sdch_manager.cc \
 	net/base/static_cookie_policy.cc \
 	net/base/test_data_stream.cc \
+	net/base/trace_net_log_observer.cc \
 	net/base/upload_bytes_element_reader.cc \
 	net/base/upload_data_stream.cc \
-	net/base/upload_element.cc \
 	net/base/upload_element_reader.cc \
 	net/base/upload_file_element_reader.cc \
 	net/base/url_util.cc \
 	net/cert/cert_database_android.cc \
 	net/cert/cert_verify_proc.cc \
 	net/cert/cert_verify_proc_android.cc \
-	net/cert/crl_set.cc \
+	net/cert/crl_set_storage.cc \
 	net/cert/ct_known_logs.cc \
 	net/cert/ct_log_response_parser.cc \
 	net/cert/ct_log_verifier.cc \
@@ -151,7 +152,6 @@ LOCAL_SRC_FILES := \
 	net/cert/ct_objects_extractor_openssl.cc \
 	net/cert/ct_serialization.cc \
 	net/cert/ct_signed_certificate_timestamp_log_param.cc \
-	net/cert/ct_verify_result.cc \
 	net/cert/ev_root_ca_metadata.cc \
 	net/cert/jwk_serializer_openssl.cc \
 	net/cert/multi_log_ct_verifier.cc \
@@ -208,7 +208,6 @@ LOCAL_SRC_FILES := \
 	net/disk_cache/simple/simple_synchronous_entry.cc \
 	net/disk_cache/simple/simple_util.cc \
 	net/disk_cache/simple/simple_version_upgrade.cc \
-	net/disk_cache/tracing/tracing_cache_backend.cc \
 	net/dns/address_sorter_posix.cc \
 	net/dns/dns_client.cc \
 	net/dns/dns_config_service.cc \
@@ -245,6 +244,7 @@ LOCAL_SRC_FILES := \
 	net/ftp/ftp_server_type_histograms.cc \
 	net/ftp/ftp_util.cc \
 	net/http/des.cc \
+	net/http/disk_based_cert_cache.cc \
 	net/http/disk_cache_based_quic_server_info.cc \
 	net/http/failing_http_transaction_factory.cc \
 	net/http/http_auth.cc \
@@ -273,6 +273,7 @@ LOCAL_SRC_FILES := \
 	net/http/http_response_body_drainer.cc \
 	net/http/http_server_properties.cc \
 	net/http/http_server_properties_impl.cc \
+	net/http/http_server_properties_manager.cc \
 	net/http/http_status_code.cc \
 	net/http/http_stream_factory.cc \
 	net/http/http_stream_factory_impl.cc \
@@ -305,8 +306,6 @@ LOCAL_SRC_FILES := \
 	net/proxy/proxy_service.cc \
 	net/quic/congestion_control/cube_root.cc \
 	net/quic/congestion_control/cubic.cc \
-	net/quic/congestion_control/fix_rate_receiver.cc \
-	net/quic/congestion_control/fix_rate_sender.cc \
 	net/quic/congestion_control/hybrid_slow_start.cc \
 	net/quic/congestion_control/leaky_bucket.cc \
 	net/quic/congestion_control/loss_detection_interface.cc \
@@ -326,6 +325,7 @@ LOCAL_SRC_FILES := \
 	net/quic/crypto/chacha20_poly1305_decrypter_openssl.cc \
 	net/quic/crypto/chacha20_poly1305_encrypter_openssl.cc \
 	net/quic/crypto/channel_id.cc \
+	net/quic/crypto/channel_id_chromium.cc \
 	net/quic/crypto/channel_id_openssl.cc \
 	net/quic/crypto/common_cert_set.cc \
 	net/quic/crypto/crypto_framer.cc \
@@ -391,6 +391,7 @@ LOCAL_SRC_FILES := \
 	net/quic/quic_socket_address_coder.cc \
 	net/quic/quic_stream_factory.cc \
 	net/quic/quic_stream_sequencer.cc \
+	net/quic/quic_sustained_bandwidth_recorder.cc \
 	net/quic/quic_time.cc \
 	net/quic/quic_types.cc \
 	net/quic/quic_unacked_packet_map.cc \
@@ -403,7 +404,9 @@ LOCAL_SRC_FILES := \
 	net/socket/client_socket_pool_base.cc \
 	net/socket/client_socket_pool_manager.cc \
 	net/socket/client_socket_pool_manager_impl.cc \
+	net/socket/server_socket.cc \
 	net/socket/socket_descriptor.cc \
+	net/socket/socket_libevent.cc \
 	net/socket/socket_net_log_params.cc \
 	net/socket/socks5_client_socket.cc \
 	net/socket/socks_client_socket.cc \
@@ -414,10 +417,14 @@ LOCAL_SRC_FILES := \
 	net/socket/tcp_client_socket.cc \
 	net/socket/tcp_listen_socket.cc \
 	net/socket/tcp_server_socket.cc \
-	net/socket/tcp_socket.cc \
 	net/socket/tcp_socket_libevent.cc \
 	net/socket/transport_client_socket_pool.cc \
-	net/socket/unix_domain_socket_posix.cc \
+	net/socket/unix_domain_client_socket_posix.cc \
+	net/socket/unix_domain_listen_socket_posix.cc \
+	net/socket/unix_domain_server_socket_posix.cc \
+	net/socket/websocket_endpoint_lock_manager.cc \
+	net/socket/websocket_transport_client_socket_pool.cc \
+	net/socket/websocket_transport_connect_sub_job.cc \
 	net/socket_stream/socket_stream.cc \
 	net/socket_stream/socket_stream_job.cc \
 	net/socket_stream/socket_stream_job_manager.cc \
@@ -433,6 +440,7 @@ LOCAL_SRC_FILES := \
 	net/spdy/hpack_huffman_table.cc \
 	net/spdy/hpack_input_stream.cc \
 	net/spdy/hpack_output_stream.cc \
+	net/spdy/hpack_static_table.cc \
 	net/spdy/hpack_string_util.cc \
 	net/spdy/spdy_buffer.cc \
 	net/spdy/spdy_buffer_producer.cc \
@@ -455,7 +463,6 @@ LOCAL_SRC_FILES := \
 	net/spdy/spdy_websocket_stream.cc \
 	net/spdy/spdy_write_queue.cc \
 	net/ssl/ssl_cipher_suite_names.cc \
-	net/ssl/ssl_config_service.cc \
 	net/ssl/ssl_config_service_defaults.cc \
 	net/udp/udp_client_socket.cc \
 	net/udp/udp_net_log_parameters.cc \
@@ -464,6 +471,7 @@ LOCAL_SRC_FILES := \
 	net/url_request/data_protocol_handler.cc \
 	net/url_request/file_protocol_handler.cc \
 	net/url_request/ftp_protocol_handler.cc \
+	net/url_request/redirect_info.cc \
 	net/url_request/static_http_user_agent_settings.cc \
 	net/url_request/url_fetcher.cc \
 	net/url_request/url_fetcher_core.cc \
@@ -526,7 +534,6 @@ LOCAL_SRC_FILES := \
 MY_CFLAGS_Debug := \
 	--param=ssp-buffer-size=4 \
 	-Werror \
-	-fno-exceptions \
 	-fno-strict-aliasing \
 	-Wall \
 	-Wno-unused-parameter \
@@ -553,6 +560,7 @@ MY_CFLAGS_Debug := \
 	-fno-stack-protector \
 	-Os \
 	-g \
+	-gdwarf-4 \
 	-fdata-sections \
 	-ffunction-sections \
 	-fomit-frame-pointer \
@@ -560,7 +568,6 @@ MY_CFLAGS_Debug := \
 
 MY_DEFS_Debug := \
 	'-DV8_DEPRECATION_WARNINGS' \
-	'-DBLINK_SCALE_FILTERS_AT_RECORD_TIME' \
 	'-D_FILE_OFFSET_BITS=64' \
 	'-DNO_TCMALLOC' \
 	'-DDISABLE_NACL' \
@@ -577,14 +584,17 @@ MY_DEFS_Debug := \
 	'-DENABLE_PRINTING=1' \
 	'-DENABLE_MANAGED_USERS=1' \
 	'-DDATA_REDUCTION_FALLBACK_HOST="http://compress.googlezip.net:80/"' \
-	'-DDATA_REDUCTION_DEV_HOST="http://proxy-dev.googlezip.net:80/"' \
+	'-DDATA_REDUCTION_DEV_HOST="https://proxy-dev.googlezip.net:443/"' \
+	'-DDATA_REDUCTION_DEV_FALLBACK_HOST="http://proxy-dev.googlezip.net:80/"' \
 	'-DSPDY_PROXY_AUTH_ORIGIN="https://proxy.googlezip.net:443/"' \
 	'-DDATA_REDUCTION_PROXY_PROBE_URL="http://check.googlezip.net/connect"' \
 	'-DDATA_REDUCTION_PROXY_WARMUP_URL="http://www.gstatic.com/generate_204"' \
 	'-DVIDEO_HOLE=1' \
+	'-DENABLE_LOAD_COMPLETION_HACKS=1' \
 	'-DNET_IMPLEMENTATION' \
 	'-DENABLE_BUILT_IN_DNS' \
 	'-DU_USING_ICU_NAMESPACE=0' \
+	'-DU_ENABLE_DYLOAD=0' \
 	'-DUSE_OPENSSL=1' \
 	'-DUSE_OPENSSL_CERTS=1' \
 	'-D__STDC_CONSTANT_MACROS' \
@@ -603,16 +613,14 @@ MY_DEFS_Debug := \
 LOCAL_C_INCLUDES_Debug := \
 	$(gyp_shared_intermediate_dir)/shim_headers/icuuc/target \
 	$(gyp_shared_intermediate_dir)/shim_headers/icui18n/target \
-	$(gyp_shared_intermediate_dir)/shim_headers/ashmem/target \
 	$(gyp_shared_intermediate_dir) \
-	$(LOCAL_PATH)/third_party/openssl \
 	$(LOCAL_PATH) \
 	$(LOCAL_PATH)/sdch/open-vcdiff/src \
 	$(PWD)/external/icu/icu4c/source/common \
 	$(PWD)/external/icu/icu4c/source/i18n \
 	$(LOCAL_PATH)/third_party/zlib \
+	$(LOCAL_PATH)/third_party/boringssl/src/include \
 	$(gyp_shared_intermediate_dir)/net \
-	$(LOCAL_PATH)/third_party/openssl/openssl/include \
 	$(PWD)/frameworks/wilhelm/include \
 	$(PWD)/bionic \
 	$(PWD)/external/stlport/stlport
@@ -620,21 +628,22 @@ LOCAL_C_INCLUDES_Debug := \
 
 # Flags passed to only C++ (and not C) files.
 LOCAL_CPPFLAGS_Debug := \
+	-fno-exceptions \
 	-fno-rtti \
 	-fno-threadsafe-statics \
 	-fvisibility-inlines-hidden \
 	-Wsign-compare \
+	-std=gnu++11 \
+	-Wno-narrowing \
+	-Wno-literal-suffix \
 	-Wno-non-virtual-dtor \
 	-Wno-sign-promo
 
-
-LOCAL_FDO_SUPPORT_Debug := false
 
 # Flags passed to both C and C++ files.
 MY_CFLAGS_Release := \
 	--param=ssp-buffer-size=4 \
 	-Werror \
-	-fno-exceptions \
 	-fno-strict-aliasing \
 	-Wall \
 	-Wno-unused-parameter \
@@ -668,7 +677,6 @@ MY_CFLAGS_Release := \
 
 MY_DEFS_Release := \
 	'-DV8_DEPRECATION_WARNINGS' \
-	'-DBLINK_SCALE_FILTERS_AT_RECORD_TIME' \
 	'-D_FILE_OFFSET_BITS=64' \
 	'-DNO_TCMALLOC' \
 	'-DDISABLE_NACL' \
@@ -685,14 +693,17 @@ MY_DEFS_Release := \
 	'-DENABLE_PRINTING=1' \
 	'-DENABLE_MANAGED_USERS=1' \
 	'-DDATA_REDUCTION_FALLBACK_HOST="http://compress.googlezip.net:80/"' \
-	'-DDATA_REDUCTION_DEV_HOST="http://proxy-dev.googlezip.net:80/"' \
+	'-DDATA_REDUCTION_DEV_HOST="https://proxy-dev.googlezip.net:443/"' \
+	'-DDATA_REDUCTION_DEV_FALLBACK_HOST="http://proxy-dev.googlezip.net:80/"' \
 	'-DSPDY_PROXY_AUTH_ORIGIN="https://proxy.googlezip.net:443/"' \
 	'-DDATA_REDUCTION_PROXY_PROBE_URL="http://check.googlezip.net/connect"' \
 	'-DDATA_REDUCTION_PROXY_WARMUP_URL="http://www.gstatic.com/generate_204"' \
 	'-DVIDEO_HOLE=1' \
+	'-DENABLE_LOAD_COMPLETION_HACKS=1' \
 	'-DNET_IMPLEMENTATION' \
 	'-DENABLE_BUILT_IN_DNS' \
 	'-DU_USING_ICU_NAMESPACE=0' \
+	'-DU_ENABLE_DYLOAD=0' \
 	'-DUSE_OPENSSL=1' \
 	'-DUSE_OPENSSL_CERTS=1' \
 	'-D__STDC_CONSTANT_MACROS' \
@@ -712,16 +723,14 @@ MY_DEFS_Release := \
 LOCAL_C_INCLUDES_Release := \
 	$(gyp_shared_intermediate_dir)/shim_headers/icuuc/target \
 	$(gyp_shared_intermediate_dir)/shim_headers/icui18n/target \
-	$(gyp_shared_intermediate_dir)/shim_headers/ashmem/target \
 	$(gyp_shared_intermediate_dir) \
-	$(LOCAL_PATH)/third_party/openssl \
 	$(LOCAL_PATH) \
 	$(LOCAL_PATH)/sdch/open-vcdiff/src \
 	$(PWD)/external/icu/icu4c/source/common \
 	$(PWD)/external/icu/icu4c/source/i18n \
 	$(LOCAL_PATH)/third_party/zlib \
+	$(LOCAL_PATH)/third_party/boringssl/src/include \
 	$(gyp_shared_intermediate_dir)/net \
-	$(LOCAL_PATH)/third_party/openssl/openssl/include \
 	$(PWD)/frameworks/wilhelm/include \
 	$(PWD)/bionic \
 	$(PWD)/external/stlport/stlport
@@ -729,62 +738,23 @@ LOCAL_C_INCLUDES_Release := \
 
 # Flags passed to only C++ (and not C) files.
 LOCAL_CPPFLAGS_Release := \
+	-fno-exceptions \
 	-fno-rtti \
 	-fno-threadsafe-statics \
 	-fvisibility-inlines-hidden \
 	-Wsign-compare \
+	-std=gnu++11 \
+	-Wno-narrowing \
+	-Wno-literal-suffix \
 	-Wno-non-virtual-dtor \
 	-Wno-sign-promo
 
 
-LOCAL_FDO_SUPPORT_Release := false
-
 LOCAL_CFLAGS := $(MY_CFLAGS_$(GYP_CONFIGURATION)) $(MY_DEFS_$(GYP_CONFIGURATION))
-LOCAL_FDO_SUPPORT := $(LOCAL_FDO_SUPPORT_$(GYP_CONFIGURATION))
 LOCAL_C_INCLUDES := $(GYP_COPIED_SOURCE_ORIGIN_DIRS) $(LOCAL_C_INCLUDES_$(GYP_CONFIGURATION))
 LOCAL_CPPFLAGS := $(LOCAL_CPPFLAGS_$(GYP_CONFIGURATION))
 LOCAL_ASFLAGS := $(LOCAL_CFLAGS)
 ### Rules for final target.
-
-LOCAL_LDFLAGS_Debug := \
-	-Wl,-z,now \
-	-Wl,-z,relro \
-	-Wl,--fatal-warnings \
-	-Wl,-z,noexecstack \
-	-fPIC \
-	-m32 \
-	-fuse-ld=gold \
-	-nostdlib \
-	-Wl,--no-undefined \
-	-Wl,--exclude-libs=ALL \
-	-Wl,--warn-shared-textrel \
-	-Wl,-O1 \
-	-Wl,--as-needed
-
-
-LOCAL_LDFLAGS_Release := \
-	-Wl,-z,now \
-	-Wl,-z,relro \
-	-Wl,--fatal-warnings \
-	-Wl,-z,noexecstack \
-	-fPIC \
-	-m32 \
-	-fuse-ld=gold \
-	-nostdlib \
-	-Wl,--no-undefined \
-	-Wl,--exclude-libs=ALL \
-	-Wl,-O1 \
-	-Wl,--as-needed \
-	-Wl,--gc-sections \
-	-Wl,--warn-shared-textrel
-
-
-LOCAL_LDFLAGS := $(LOCAL_LDFLAGS_$(GYP_CONFIGURATION))
-
-LOCAL_STATIC_LIBRARIES :=
-
-# Enable grouping to fix circular references
-LOCAL_GROUP_STATIC_LIBRARIES := true
 
 LOCAL_SHARED_LIBRARIES := \
 	libstlport \

@@ -5,7 +5,6 @@ include $(CLEAR_VARS)
 LOCAL_MODULE_CLASS := STATIC_LIBRARIES
 LOCAL_MODULE := cc_cc_gyp
 LOCAL_MODULE_SUFFIX := .a
-LOCAL_MODULE_TAGS := optional
 LOCAL_MODULE_TARGET_ARCH := $(TARGET_$(GYP_VAR_PREFIX)ARCH)
 gyp_intermediate_dir := $(call local-intermediates-dir,,$(GYP_VAR_PREFIX))
 gyp_shared_intermediate_dir := $(call intermediates-dir-for,GYP,shared,,,$(GYP_VAR_PREFIX))
@@ -14,8 +13,7 @@ gyp_shared_intermediate_dir := $(call intermediates-dir-for,GYP,shared,,,$(GYP_V
 GYP_TARGET_DEPENDENCIES := \
 	$(call intermediates-dir-for,GYP,gpu_gpu_gyp,,,$(GYP_VAR_PREFIX))/gpu.stamp \
 	$(call intermediates-dir-for,GYP,skia_skia_gyp,,,$(GYP_VAR_PREFIX))/skia.stamp \
-	$(call intermediates-dir-for,STATIC_LIBRARIES,skia_skia_library_gyp,,,$(GYP_VAR_PREFIX))/skia_skia_library_gyp.a \
-	$(call intermediates-dir-for,STATIC_LIBRARIES,ui_gl_gl_gyp,,,$(GYP_VAR_PREFIX))/ui_gl_gl_gyp.a
+	$(call intermediates-dir-for,STATIC_LIBRARIES,skia_skia_library_gyp,,,$(GYP_VAR_PREFIX))/skia_skia_library_gyp.a
 
 GYP_GENERATED_OUTPUTS :=
 
@@ -49,6 +47,7 @@ LOCAL_SRC_FILES := \
 	cc/base/math_util.cc \
 	cc/base/region.cc \
 	cc/base/rolling_time_delta_history.cc \
+	cc/base/simple_enclosed_region.cc \
 	cc/base/swap_promise_monitor.cc \
 	cc/base/switches.cc \
 	cc/base/tiling_data.cc \
@@ -75,6 +74,7 @@ LOCAL_SRC_FILES := \
 	cc/debug/unittest_only_benchmark.cc \
 	cc/debug/unittest_only_benchmark_impl.cc \
 	cc/input/page_scale_animation.cc \
+	cc/input/layer_selection_bound.cc \
 	cc/input/top_controls_manager.cc \
 	cc/layers/content_layer.cc \
 	cc/layers/contents_scaling_layer.cc \
@@ -100,7 +100,6 @@ LOCAL_SRC_FILES := \
 	cc/layers/picture_image_layer_impl.cc \
 	cc/layers/picture_layer.cc \
 	cc/layers/picture_layer_impl.cc \
-	cc/layers/quad_sink.cc \
 	cc/layers/render_surface.cc \
 	cc/layers/render_surface_impl.cc \
 	cc/layers/scrollbar_layer_impl_base.cc \
@@ -120,6 +119,8 @@ LOCAL_SRC_FILES := \
 	cc/layers/video_layer.cc \
 	cc/layers/video_layer_impl.cc \
 	cc/output/begin_frame_args.cc \
+	cc/output/bsp_tree.cc \
+	cc/output/bsp_walk_action.cc \
 	cc/output/compositor_frame.cc \
 	cc/output/compositor_frame_ack.cc \
 	cc/output/compositor_frame_metadata.cc \
@@ -147,14 +148,18 @@ LOCAL_SRC_FILES := \
 	cc/output/software_frame_data.cc \
 	cc/output/software_output_device.cc \
 	cc/output/software_renderer.cc \
+	cc/output/viewport_selection_bound.cc \
 	cc/quads/checkerboard_draw_quad.cc \
 	cc/quads/content_draw_quad_base.cc \
 	cc/quads/debug_border_draw_quad.cc \
+	cc/quads/draw_polygon.cc \
 	cc/quads/draw_quad.cc \
 	cc/quads/io_surface_draw_quad.cc \
+	cc/quads/list_container.cc \
 	cc/quads/picture_draw_quad.cc \
 	cc/quads/render_pass.cc \
 	cc/quads/render_pass_draw_quad.cc \
+	cc/quads/render_pass_id.cc \
 	cc/quads/shared_quad_state.cc \
 	cc/quads/solid_color_draw_quad.cc \
 	cc/quads/stream_video_draw_quad.cc \
@@ -163,17 +168,18 @@ LOCAL_SRC_FILES := \
 	cc/quads/tile_draw_quad.cc \
 	cc/quads/yuv_video_draw_quad.cc \
 	cc/resources/bitmap_content_layer_updater.cc \
+	cc/resources/bitmap_raster_worker_pool.cc \
 	cc/resources/bitmap_skpicture_content_layer_updater.cc \
 	cc/resources/content_layer_updater.cc \
-	cc/resources/direct_raster_worker_pool.cc \
+	cc/resources/eviction_tile_priority_queue.cc \
+	cc/resources/gpu_raster_worker_pool.cc \
 	cc/resources/image_layer_updater.cc \
-	cc/resources/image_raster_worker_pool.cc \
-	cc/resources/image_copy_raster_worker_pool.cc \
 	cc/resources/layer_quad.cc \
 	cc/resources/layer_tiling_data.cc \
 	cc/resources/layer_updater.cc \
 	cc/resources/managed_tile_state.cc \
 	cc/resources/memory_history.cc \
+	cc/resources/one_copy_raster_worker_pool.cc \
 	cc/resources/picture.cc \
 	cc/resources/picture_layer_tiling.cc \
 	cc/resources/picture_layer_tiling_set.cc \
@@ -185,7 +191,9 @@ LOCAL_SRC_FILES := \
 	cc/resources/prioritized_resource_manager.cc \
 	cc/resources/prioritized_tile_set.cc \
 	cc/resources/priority_calculator.cc \
+	cc/resources/raster_buffer.cc \
 	cc/resources/raster_mode.cc \
+	cc/resources/raster_tile_priority_queue.cc \
 	cc/resources/raster_worker_pool.cc \
 	cc/resources/rasterizer.cc \
 	cc/resources/resource.cc \
@@ -195,10 +203,12 @@ LOCAL_SRC_FILES := \
 	cc/resources/resource_update.cc \
 	cc/resources/resource_update_controller.cc \
 	cc/resources/resource_update_queue.cc \
+	cc/resources/scoped_gpu_raster.cc \
 	cc/resources/scoped_resource.cc \
 	cc/resources/scoped_ui_resource.cc \
 	cc/resources/shared_bitmap.cc \
 	cc/resources/single_release_callback.cc \
+	cc/resources/single_release_callback_impl.cc \
 	cc/resources/skpicture_content_layer_updater.cc \
 	cc/resources/task_graph_runner.cc \
 	cc/resources/texture_mailbox.cc \
@@ -211,6 +221,7 @@ LOCAL_SRC_FILES := \
 	cc/resources/ui_resource_bitmap.cc \
 	cc/resources/ui_resource_request.cc \
 	cc/resources/video_resource_updater.cc \
+	cc/resources/zero_copy_raster_worker_pool.cc \
 	cc/scheduler/delay_based_time_source.cc \
 	cc/scheduler/scheduler.cc \
 	cc/scheduler/scheduler_settings.cc \
@@ -223,6 +234,7 @@ LOCAL_SRC_FILES := \
 	cc/trees/layer_tree_host_impl.cc \
 	cc/trees/layer_tree_impl.cc \
 	cc/trees/layer_tree_settings.cc \
+	cc/trees/occlusion.cc \
 	cc/trees/occlusion_tracker.cc \
 	cc/trees/proxy.cc \
 	cc/trees/proxy_timing_history.cc \
@@ -235,7 +247,6 @@ LOCAL_SRC_FILES := \
 MY_CFLAGS_Debug := \
 	--param=ssp-buffer-size=4 \
 	-Werror \
-	-fno-exceptions \
 	-fno-strict-aliasing \
 	-Wall \
 	-Wno-unused-parameter \
@@ -262,6 +273,7 @@ MY_CFLAGS_Debug := \
 	-fno-stack-protector \
 	-Os \
 	-g \
+	-gdwarf-4 \
 	-fdata-sections \
 	-ffunction-sections \
 	-fomit-frame-pointer \
@@ -269,7 +281,6 @@ MY_CFLAGS_Debug := \
 
 MY_DEFS_Debug := \
 	'-DV8_DEPRECATION_WARNINGS' \
-	'-DBLINK_SCALE_FILTERS_AT_RECORD_TIME' \
 	'-D_FILE_OFFSET_BITS=64' \
 	'-DNO_TCMALLOC' \
 	'-DDISABLE_NACL' \
@@ -286,11 +297,13 @@ MY_DEFS_Debug := \
 	'-DENABLE_PRINTING=1' \
 	'-DENABLE_MANAGED_USERS=1' \
 	'-DDATA_REDUCTION_FALLBACK_HOST="http://compress.googlezip.net:80/"' \
-	'-DDATA_REDUCTION_DEV_HOST="http://proxy-dev.googlezip.net:80/"' \
+	'-DDATA_REDUCTION_DEV_HOST="https://proxy-dev.googlezip.net:443/"' \
+	'-DDATA_REDUCTION_DEV_FALLBACK_HOST="http://proxy-dev.googlezip.net:80/"' \
 	'-DSPDY_PROXY_AUTH_ORIGIN="https://proxy.googlezip.net:443/"' \
 	'-DDATA_REDUCTION_PROXY_PROBE_URL="http://check.googlezip.net/connect"' \
 	'-DDATA_REDUCTION_PROXY_WARMUP_URL="http://www.gstatic.com/generate_204"' \
 	'-DVIDEO_HOLE=1' \
+	'-DENABLE_LOAD_COMPLETION_HACKS=1' \
 	'-DCC_IMPLEMENTATION=1' \
 	'-DMEDIA_DISABLE_LIBVPX' \
 	'-DSK_ENABLE_INST_COUNT=0' \
@@ -300,19 +313,13 @@ MY_DEFS_Debug := \
 	'-DSK_ATTR_DEPRECATED=SK_NOTHING_ARG1' \
 	'-DGR_GL_IGNORE_ES3_MSAA=0' \
 	'-DSK_WILL_NEVER_DRAW_PERSPECTIVE_TEXT' \
-	'-DSK_SUPPORT_LEGACY_GETTOPDEVICE' \
-	'-DSK_SUPPORT_LEGACY_BITMAP_CONFIG' \
-	'-DSK_SUPPORT_LEGACY_DEVICE_VIRTUAL_ISOPAQUE' \
-	'-DSK_SUPPORT_LEGACY_N32_NAME' \
-	'-DSK_SUPPORT_LEGACY_SETCONFIG' \
-	'-DSK_IGNORE_ETC1_SUPPORT' \
-	'-DSK_IGNORE_GPU_DITHER' \
-	'-DSK_SUPPORT_LEGACY_GETTOTALCLIP' \
+	'-DSK_SUPPORT_LEGACY_TEXTRENDERMODE' \
 	'-DSK_BUILD_FOR_ANDROID' \
 	'-DSK_USE_POSIX_THREADS' \
 	'-DSK_DEFERRED_CANVAS_USES_FACTORIES=1' \
+	'-DSK_FM_NEW_MATCH_FAMILY_STYLE_CHARACTER=1' \
 	'-DU_USING_ICU_NAMESPACE=0' \
-	'-DMESA_EGL_NO_X11_HEADERS' \
+	'-DU_ENABLE_DYLOAD=0' \
 	'-DUSE_OPENSSL=1' \
 	'-DUSE_OPENSSL_CERTS=1' \
 	'-D__STDC_CONSTANT_MACROS' \
@@ -331,7 +338,6 @@ MY_DEFS_Debug := \
 LOCAL_C_INCLUDES_Debug := \
 	$(gyp_shared_intermediate_dir)/shim_headers/icuuc/target \
 	$(gyp_shared_intermediate_dir)/shim_headers/icui18n/target \
-	$(gyp_shared_intermediate_dir)/shim_headers/ashmem/target \
 	$(gyp_shared_intermediate_dir) \
 	$(LOCAL_PATH) \
 	$(LOCAL_PATH)/third_party/khronos \
@@ -350,8 +356,6 @@ LOCAL_C_INCLUDES_Debug := \
 	$(LOCAL_PATH)/skia/ext \
 	$(PWD)/external/icu/icu4c/source/common \
 	$(PWD)/external/icu/icu4c/source/i18n \
-	$(gyp_shared_intermediate_dir)/ui/gl \
-	$(LOCAL_PATH)/third_party/mesa/src/include \
 	$(PWD)/frameworks/wilhelm/include \
 	$(PWD)/bionic \
 	$(PWD)/external/stlport/stlport
@@ -359,21 +363,22 @@ LOCAL_C_INCLUDES_Debug := \
 
 # Flags passed to only C++ (and not C) files.
 LOCAL_CPPFLAGS_Debug := \
+	-fno-exceptions \
 	-fno-rtti \
 	-fno-threadsafe-statics \
 	-fvisibility-inlines-hidden \
 	-Wsign-compare \
+	-std=gnu++11 \
+	-Wno-narrowing \
+	-Wno-literal-suffix \
 	-Wno-non-virtual-dtor \
 	-Wno-sign-promo
 
-
-LOCAL_FDO_SUPPORT_Debug := false
 
 # Flags passed to both C and C++ files.
 MY_CFLAGS_Release := \
 	--param=ssp-buffer-size=4 \
 	-Werror \
-	-fno-exceptions \
 	-fno-strict-aliasing \
 	-Wall \
 	-Wno-unused-parameter \
@@ -398,16 +403,15 @@ MY_CFLAGS_Release := \
 	-Wno-type-limits \
 	-Wno-unused-but-set-variable \
 	-fno-stack-protector \
-	-Os \
 	-fno-ident \
 	-fdata-sections \
 	-ffunction-sections \
 	-fomit-frame-pointer \
-	-funwind-tables
+	-funwind-tables \
+	-O2
 
 MY_DEFS_Release := \
 	'-DV8_DEPRECATION_WARNINGS' \
-	'-DBLINK_SCALE_FILTERS_AT_RECORD_TIME' \
 	'-D_FILE_OFFSET_BITS=64' \
 	'-DNO_TCMALLOC' \
 	'-DDISABLE_NACL' \
@@ -424,11 +428,13 @@ MY_DEFS_Release := \
 	'-DENABLE_PRINTING=1' \
 	'-DENABLE_MANAGED_USERS=1' \
 	'-DDATA_REDUCTION_FALLBACK_HOST="http://compress.googlezip.net:80/"' \
-	'-DDATA_REDUCTION_DEV_HOST="http://proxy-dev.googlezip.net:80/"' \
+	'-DDATA_REDUCTION_DEV_HOST="https://proxy-dev.googlezip.net:443/"' \
+	'-DDATA_REDUCTION_DEV_FALLBACK_HOST="http://proxy-dev.googlezip.net:80/"' \
 	'-DSPDY_PROXY_AUTH_ORIGIN="https://proxy.googlezip.net:443/"' \
 	'-DDATA_REDUCTION_PROXY_PROBE_URL="http://check.googlezip.net/connect"' \
 	'-DDATA_REDUCTION_PROXY_WARMUP_URL="http://www.gstatic.com/generate_204"' \
 	'-DVIDEO_HOLE=1' \
+	'-DENABLE_LOAD_COMPLETION_HACKS=1' \
 	'-DCC_IMPLEMENTATION=1' \
 	'-DMEDIA_DISABLE_LIBVPX' \
 	'-DSK_ENABLE_INST_COUNT=0' \
@@ -438,19 +444,13 @@ MY_DEFS_Release := \
 	'-DSK_ATTR_DEPRECATED=SK_NOTHING_ARG1' \
 	'-DGR_GL_IGNORE_ES3_MSAA=0' \
 	'-DSK_WILL_NEVER_DRAW_PERSPECTIVE_TEXT' \
-	'-DSK_SUPPORT_LEGACY_GETTOPDEVICE' \
-	'-DSK_SUPPORT_LEGACY_BITMAP_CONFIG' \
-	'-DSK_SUPPORT_LEGACY_DEVICE_VIRTUAL_ISOPAQUE' \
-	'-DSK_SUPPORT_LEGACY_N32_NAME' \
-	'-DSK_SUPPORT_LEGACY_SETCONFIG' \
-	'-DSK_IGNORE_ETC1_SUPPORT' \
-	'-DSK_IGNORE_GPU_DITHER' \
-	'-DSK_SUPPORT_LEGACY_GETTOTALCLIP' \
+	'-DSK_SUPPORT_LEGACY_TEXTRENDERMODE' \
 	'-DSK_BUILD_FOR_ANDROID' \
 	'-DSK_USE_POSIX_THREADS' \
 	'-DSK_DEFERRED_CANVAS_USES_FACTORIES=1' \
+	'-DSK_FM_NEW_MATCH_FAMILY_STYLE_CHARACTER=1' \
 	'-DU_USING_ICU_NAMESPACE=0' \
-	'-DMESA_EGL_NO_X11_HEADERS' \
+	'-DU_ENABLE_DYLOAD=0' \
 	'-DUSE_OPENSSL=1' \
 	'-DUSE_OPENSSL_CERTS=1' \
 	'-D__STDC_CONSTANT_MACROS' \
@@ -470,7 +470,6 @@ MY_DEFS_Release := \
 LOCAL_C_INCLUDES_Release := \
 	$(gyp_shared_intermediate_dir)/shim_headers/icuuc/target \
 	$(gyp_shared_intermediate_dir)/shim_headers/icui18n/target \
-	$(gyp_shared_intermediate_dir)/shim_headers/ashmem/target \
 	$(gyp_shared_intermediate_dir) \
 	$(LOCAL_PATH) \
 	$(LOCAL_PATH)/third_party/khronos \
@@ -489,8 +488,6 @@ LOCAL_C_INCLUDES_Release := \
 	$(LOCAL_PATH)/skia/ext \
 	$(PWD)/external/icu/icu4c/source/common \
 	$(PWD)/external/icu/icu4c/source/i18n \
-	$(gyp_shared_intermediate_dir)/ui/gl \
-	$(LOCAL_PATH)/third_party/mesa/src/include \
 	$(PWD)/frameworks/wilhelm/include \
 	$(PWD)/bionic \
 	$(PWD)/external/stlport/stlport
@@ -498,64 +495,23 @@ LOCAL_C_INCLUDES_Release := \
 
 # Flags passed to only C++ (and not C) files.
 LOCAL_CPPFLAGS_Release := \
+	-fno-exceptions \
 	-fno-rtti \
 	-fno-threadsafe-statics \
 	-fvisibility-inlines-hidden \
 	-Wsign-compare \
+	-std=gnu++11 \
+	-Wno-narrowing \
+	-Wno-literal-suffix \
 	-Wno-non-virtual-dtor \
 	-Wno-sign-promo
 
 
-LOCAL_FDO_SUPPORT_Release := false
-
 LOCAL_CFLAGS := $(MY_CFLAGS_$(GYP_CONFIGURATION)) $(MY_DEFS_$(GYP_CONFIGURATION))
-LOCAL_FDO_SUPPORT := $(LOCAL_FDO_SUPPORT_$(GYP_CONFIGURATION))
 LOCAL_C_INCLUDES := $(GYP_COPIED_SOURCE_ORIGIN_DIRS) $(LOCAL_C_INCLUDES_$(GYP_CONFIGURATION))
 LOCAL_CPPFLAGS := $(LOCAL_CPPFLAGS_$(GYP_CONFIGURATION))
 LOCAL_ASFLAGS := $(LOCAL_CFLAGS)
 ### Rules for final target.
-
-LOCAL_LDFLAGS_Debug := \
-	-Wl,-z,now \
-	-Wl,-z,relro \
-	-Wl,--fatal-warnings \
-	-Wl,-z,noexecstack \
-	-fPIC \
-	-m32 \
-	-fuse-ld=gold \
-	-nostdlib \
-	-Wl,--no-undefined \
-	-Wl,--exclude-libs=ALL \
-	-Wl,--warn-shared-textrel \
-	-Wl,-O1 \
-	-Wl,--as-needed
-
-
-LOCAL_LDFLAGS_Release := \
-	-Wl,-z,now \
-	-Wl,-z,relro \
-	-Wl,--fatal-warnings \
-	-Wl,-z,noexecstack \
-	-fPIC \
-	-m32 \
-	-fuse-ld=gold \
-	-nostdlib \
-	-Wl,--no-undefined \
-	-Wl,--exclude-libs=ALL \
-	-Wl,-O1 \
-	-Wl,--as-needed \
-	-Wl,--gc-sections \
-	-Wl,--warn-shared-textrel
-
-
-LOCAL_LDFLAGS := $(LOCAL_LDFLAGS_$(GYP_CONFIGURATION))
-
-LOCAL_STATIC_LIBRARIES := \
-	skia_skia_library_gyp \
-	ui_gl_gl_gyp
-
-# Enable grouping to fix circular references
-LOCAL_GROUP_STATIC_LIBRARIES := true
 
 LOCAL_SHARED_LIBRARIES := \
 	libstlport \

@@ -5,15 +5,13 @@ include $(CLEAR_VARS)
 LOCAL_MODULE_CLASS := STATIC_LIBRARIES
 LOCAL_MODULE := third_party_libaddressinput_libaddressinput_util_gyp
 LOCAL_MODULE_SUFFIX := .a
-LOCAL_MODULE_TAGS := optional
 LOCAL_MODULE_TARGET_ARCH := $(TARGET_$(GYP_VAR_PREFIX)ARCH)
 gyp_intermediate_dir := $(call local-intermediates-dir,,$(GYP_VAR_PREFIX))
 gyp_shared_intermediate_dir := $(call intermediates-dir-for,GYP,shared,,,$(GYP_VAR_PREFIX))
 
 # Make sure our deps are built first.
 GYP_TARGET_DEPENDENCIES := \
-	$(call intermediates-dir-for,GYP,third_party_icu_icui18n_gyp,,,$(GYP_VAR_PREFIX))/icui18n.stamp \
-	$(call intermediates-dir-for,GYP,third_party_icu_icuuc_gyp,,,$(GYP_VAR_PREFIX))/icuuc.stamp
+	$(call intermediates-dir-for,GYP,third_party_libaddressinput_libaddressinput_strings_gyp,,,$(GYP_VAR_PREFIX))/libaddressinput_strings.stamp
 
 GYP_GENERATED_OUTPUTS :=
 
@@ -26,20 +24,29 @@ LOCAL_GENERATED_SOURCES :=
 GYP_COPIED_SOURCE_ORIGIN_DIRS :=
 
 LOCAL_SRC_FILES := \
-	third_party/libaddressinput/chromium/canonicalize_string.cc \
-	third_party/libaddressinput/chromium/json.cc \
-	third_party/libaddressinput/chromium/cpp/src/address_data.cc \
-	third_party/libaddressinput/chromium/cpp/src/address_field.cc \
-	third_party/libaddressinput/chromium/cpp/src/region_data_constants.cc \
-	third_party/libaddressinput/chromium/cpp/src/rule.cc \
-	third_party/libaddressinput/chromium/cpp/src/util/string_util.cc
+	third_party/libaddressinput/src/cpp/src/address_data.cc \
+	third_party/libaddressinput/src/cpp/src/address_field.cc \
+	third_party/libaddressinput/src/cpp/src/address_field_util.cc \
+	third_party/libaddressinput/src/cpp/src/address_formatter.cc \
+	third_party/libaddressinput/src/cpp/src/address_metadata.cc \
+	third_party/libaddressinput/src/cpp/src/address_ui.cc \
+	third_party/libaddressinput/src/cpp/src/format_element.cc \
+	third_party/libaddressinput/src/cpp/src/language.cc \
+	third_party/libaddressinput/src/cpp/src/localization.cc \
+	third_party/libaddressinput/src/cpp/src/lookup_key.cc \
+	third_party/libaddressinput/src/cpp/src/region_data_constants.cc \
+	third_party/libaddressinput/src/cpp/src/rule.cc \
+	third_party/libaddressinput/src/cpp/src/util/cctype_tolower_equal.cc \
+	third_party/libaddressinput/src/cpp/src/util/string_split.cc \
+	third_party/libaddressinput/src/cpp/src/util/string_util.cc \
+	third_party/libaddressinput/chromium/addressinput_util.cc \
+	third_party/libaddressinput/chromium/json.cc
 
 
 # Flags passed to both C and C++ files.
 MY_CFLAGS_Debug := \
 	-fstack-protector \
 	--param=ssp-buffer-size=4 \
-	-fno-exceptions \
 	-fno-strict-aliasing \
 	-Wno-unused-parameter \
 	-Wno-missing-field-initializers \
@@ -49,13 +56,13 @@ MY_CFLAGS_Debug := \
 	-Wno-unused-local-typedefs \
 	-Wno-format \
 	-fno-tree-sra \
+	-fno-caller-saves \
+	-Wno-psabi \
 	-fno-partial-inlining \
 	-fno-early-inlining \
 	-fno-tree-copy-prop \
 	-fno-tree-loop-optimize \
 	-fno-move-loop-invariants \
-	-fno-caller-saves \
-	-Wno-psabi \
 	-ffunction-sections \
 	-funwind-tables \
 	-g \
@@ -74,16 +81,14 @@ MY_CFLAGS_Debug := \
 	-Wno-sequence-point \
 	-Os \
 	-g \
+	-gdwarf-4 \
 	-fdata-sections \
 	-ffunction-sections \
 	-fomit-frame-pointer \
 	-funwind-tables
 
 MY_DEFS_Debug := \
-	'-DCUSTOM_BASICTYPES="base/basictypes.h"' \
-	'-DCUSTOM_SCOPED_PTR="base/memory/scoped_ptr.h"' \
 	'-DV8_DEPRECATION_WARNINGS' \
-	'-DBLINK_SCALE_FILTERS_AT_RECORD_TIME' \
 	'-D_FILE_OFFSET_BITS=64' \
 	'-DNO_TCMALLOC' \
 	'-DDISABLE_NACL' \
@@ -100,12 +105,14 @@ MY_DEFS_Debug := \
 	'-DENABLE_PRINTING=1' \
 	'-DENABLE_MANAGED_USERS=1' \
 	'-DDATA_REDUCTION_FALLBACK_HOST="http://compress.googlezip.net:80/"' \
-	'-DDATA_REDUCTION_DEV_HOST="http://proxy-dev.googlezip.net:80/"' \
+	'-DDATA_REDUCTION_DEV_HOST="https://proxy-dev.googlezip.net:443/"' \
+	'-DDATA_REDUCTION_DEV_FALLBACK_HOST="http://proxy-dev.googlezip.net:80/"' \
 	'-DSPDY_PROXY_AUTH_ORIGIN="https://proxy.googlezip.net:443/"' \
 	'-DDATA_REDUCTION_PROXY_PROBE_URL="http://check.googlezip.net/connect"' \
 	'-DDATA_REDUCTION_PROXY_WARMUP_URL="http://www.gstatic.com/generate_204"' \
 	'-DVIDEO_HOLE=1' \
-	'-DU_USING_ICU_NAMESPACE=0' \
+	'-DENABLE_LOAD_COMPLETION_HACKS=1' \
+	'-DI18N_ADDRESSINPUT_USE_BASICTYPES_OVERRIDE=1' \
 	'-DUSE_OPENSSL=1' \
 	'-DUSE_OPENSSL_CERTS=1' \
 	'-DANDROID' \
@@ -120,16 +127,12 @@ MY_DEFS_Debug := \
 
 # Include paths placed before CFLAGS/CPPFLAGS
 LOCAL_C_INCLUDES_Debug := \
-	$(gyp_shared_intermediate_dir)/shim_headers/icuuc/target \
-	$(gyp_shared_intermediate_dir)/shim_headers/icui18n/target \
-	$(gyp_shared_intermediate_dir)/shim_headers/ashmem/target \
 	$(gyp_shared_intermediate_dir) \
-	$(LOCAL_PATH)/third_party/libaddressinput/chromium/cpp/include \
-	$(gyp_shared_intermediate_dir)/libaddressinput \
+	$(LOCAL_PATH)/third_party/libaddressinput/chromium/override \
+	$(LOCAL_PATH)/third_party/libaddressinput/src/cpp/include \
 	$(LOCAL_PATH) \
-	$(PWD)/external/icu/icu4c/source/common \
-	$(PWD)/external/icu/icu4c/source/i18n \
 	$(LOCAL_PATH)/third_party/re2 \
+	$(gyp_shared_intermediate_dir)/third_party/libaddressinput \
 	$(PWD)/frameworks/wilhelm/include \
 	$(PWD)/bionic \
 	$(PWD)/external/stlport/stlport
@@ -137,23 +140,24 @@ LOCAL_C_INCLUDES_Debug := \
 
 # Flags passed to only C++ (and not C) files.
 LOCAL_CPPFLAGS_Debug := \
+	-fno-exceptions \
 	-fno-rtti \
 	-fno-threadsafe-statics \
 	-fvisibility-inlines-hidden \
 	-Wno-deprecated \
 	-Wno-abi \
+	-std=gnu++11 \
+	-Wno-narrowing \
+	-Wno-literal-suffix \
 	-Wno-non-virtual-dtor \
 	-Wno-sign-promo \
 	-Wno-non-virtual-dtor
 
 
-LOCAL_FDO_SUPPORT_Debug := false
-
 # Flags passed to both C and C++ files.
 MY_CFLAGS_Release := \
 	-fstack-protector \
 	--param=ssp-buffer-size=4 \
-	-fno-exceptions \
 	-fno-strict-aliasing \
 	-Wno-unused-parameter \
 	-Wno-missing-field-initializers \
@@ -163,13 +167,13 @@ MY_CFLAGS_Release := \
 	-Wno-unused-local-typedefs \
 	-Wno-format \
 	-fno-tree-sra \
+	-fno-caller-saves \
+	-Wno-psabi \
 	-fno-partial-inlining \
 	-fno-early-inlining \
 	-fno-tree-copy-prop \
 	-fno-tree-loop-optimize \
 	-fno-move-loop-invariants \
-	-fno-caller-saves \
-	-Wno-psabi \
 	-ffunction-sections \
 	-funwind-tables \
 	-g \
@@ -194,10 +198,7 @@ MY_CFLAGS_Release := \
 	-funwind-tables
 
 MY_DEFS_Release := \
-	'-DCUSTOM_BASICTYPES="base/basictypes.h"' \
-	'-DCUSTOM_SCOPED_PTR="base/memory/scoped_ptr.h"' \
 	'-DV8_DEPRECATION_WARNINGS' \
-	'-DBLINK_SCALE_FILTERS_AT_RECORD_TIME' \
 	'-D_FILE_OFFSET_BITS=64' \
 	'-DNO_TCMALLOC' \
 	'-DDISABLE_NACL' \
@@ -214,12 +215,14 @@ MY_DEFS_Release := \
 	'-DENABLE_PRINTING=1' \
 	'-DENABLE_MANAGED_USERS=1' \
 	'-DDATA_REDUCTION_FALLBACK_HOST="http://compress.googlezip.net:80/"' \
-	'-DDATA_REDUCTION_DEV_HOST="http://proxy-dev.googlezip.net:80/"' \
+	'-DDATA_REDUCTION_DEV_HOST="https://proxy-dev.googlezip.net:443/"' \
+	'-DDATA_REDUCTION_DEV_FALLBACK_HOST="http://proxy-dev.googlezip.net:80/"' \
 	'-DSPDY_PROXY_AUTH_ORIGIN="https://proxy.googlezip.net:443/"' \
 	'-DDATA_REDUCTION_PROXY_PROBE_URL="http://check.googlezip.net/connect"' \
 	'-DDATA_REDUCTION_PROXY_WARMUP_URL="http://www.gstatic.com/generate_204"' \
 	'-DVIDEO_HOLE=1' \
-	'-DU_USING_ICU_NAMESPACE=0' \
+	'-DENABLE_LOAD_COMPLETION_HACKS=1' \
+	'-DI18N_ADDRESSINPUT_USE_BASICTYPES_OVERRIDE=1' \
 	'-DUSE_OPENSSL=1' \
 	'-DUSE_OPENSSL_CERTS=1' \
 	'-DANDROID' \
@@ -234,16 +237,12 @@ MY_DEFS_Release := \
 
 # Include paths placed before CFLAGS/CPPFLAGS
 LOCAL_C_INCLUDES_Release := \
-	$(gyp_shared_intermediate_dir)/shim_headers/icuuc/target \
-	$(gyp_shared_intermediate_dir)/shim_headers/icui18n/target \
-	$(gyp_shared_intermediate_dir)/shim_headers/ashmem/target \
 	$(gyp_shared_intermediate_dir) \
-	$(LOCAL_PATH)/third_party/libaddressinput/chromium/cpp/include \
-	$(gyp_shared_intermediate_dir)/libaddressinput \
+	$(LOCAL_PATH)/third_party/libaddressinput/chromium/override \
+	$(LOCAL_PATH)/third_party/libaddressinput/src/cpp/include \
 	$(LOCAL_PATH) \
-	$(PWD)/external/icu/icu4c/source/common \
-	$(PWD)/external/icu/icu4c/source/i18n \
 	$(LOCAL_PATH)/third_party/re2 \
+	$(gyp_shared_intermediate_dir)/third_party/libaddressinput \
 	$(PWD)/frameworks/wilhelm/include \
 	$(PWD)/bionic \
 	$(PWD)/external/stlport/stlport
@@ -251,68 +250,25 @@ LOCAL_C_INCLUDES_Release := \
 
 # Flags passed to only C++ (and not C) files.
 LOCAL_CPPFLAGS_Release := \
+	-fno-exceptions \
 	-fno-rtti \
 	-fno-threadsafe-statics \
 	-fvisibility-inlines-hidden \
 	-Wno-deprecated \
 	-Wno-abi \
+	-std=gnu++11 \
+	-Wno-narrowing \
+	-Wno-literal-suffix \
 	-Wno-non-virtual-dtor \
 	-Wno-sign-promo \
 	-Wno-non-virtual-dtor
 
 
-LOCAL_FDO_SUPPORT_Release := false
-
 LOCAL_CFLAGS := $(MY_CFLAGS_$(GYP_CONFIGURATION)) $(MY_DEFS_$(GYP_CONFIGURATION))
-LOCAL_FDO_SUPPORT := $(LOCAL_FDO_SUPPORT_$(GYP_CONFIGURATION))
 LOCAL_C_INCLUDES := $(GYP_COPIED_SOURCE_ORIGIN_DIRS) $(LOCAL_C_INCLUDES_$(GYP_CONFIGURATION))
 LOCAL_CPPFLAGS := $(LOCAL_CPPFLAGS_$(GYP_CONFIGURATION))
 LOCAL_ASFLAGS := $(LOCAL_CFLAGS)
 ### Rules for final target.
-
-LOCAL_LDFLAGS_Debug := \
-	-Wl,-z,now \
-	-Wl,-z,relro \
-	-Wl,--fatal-warnings \
-	-Wl,-z,noexecstack \
-	-fPIC \
-	-Wl,-z,relro \
-	-Wl,-z,now \
-	-fuse-ld=gold \
-	-nostdlib \
-	-Wl,--no-undefined \
-	-Wl,--exclude-libs=ALL \
-	-Wl,--icf=safe \
-	-Wl,--warn-shared-textrel \
-	-Wl,-O1 \
-	-Wl,--as-needed
-
-
-LOCAL_LDFLAGS_Release := \
-	-Wl,-z,now \
-	-Wl,-z,relro \
-	-Wl,--fatal-warnings \
-	-Wl,-z,noexecstack \
-	-fPIC \
-	-Wl,-z,relro \
-	-Wl,-z,now \
-	-fuse-ld=gold \
-	-nostdlib \
-	-Wl,--no-undefined \
-	-Wl,--exclude-libs=ALL \
-	-Wl,--icf=safe \
-	-Wl,-O1 \
-	-Wl,--as-needed \
-	-Wl,--gc-sections \
-	-Wl,--warn-shared-textrel
-
-
-LOCAL_LDFLAGS := $(LOCAL_LDFLAGS_$(GYP_CONFIGURATION))
-
-LOCAL_STATIC_LIBRARIES :=
-
-# Enable grouping to fix circular references
-LOCAL_GROUP_STATIC_LIBRARIES := true
 
 LOCAL_SHARED_LIBRARIES := \
 	libstlport \

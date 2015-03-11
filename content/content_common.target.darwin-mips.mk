@@ -5,7 +5,6 @@ include $(CLEAR_VARS)
 LOCAL_MODULE_CLASS := STATIC_LIBRARIES
 LOCAL_MODULE := content_content_common_gyp
 LOCAL_MODULE_SUFFIX := .a
-LOCAL_MODULE_TAGS := optional
 LOCAL_MODULE_TARGET_ARCH := $(TARGET_$(GYP_VAR_PREFIX)ARCH)
 gyp_intermediate_dir := $(call local-intermediates-dir,,$(GYP_VAR_PREFIX))
 gyp_shared_intermediate_dir := $(call intermediates-dir-for,GYP,shared,,,$(GYP_VAR_PREFIX))
@@ -20,6 +19,7 @@ GYP_TARGET_DEPENDENCIES := \
 	$(call intermediates-dir-for,STATIC_LIBRARIES,ui_accessibility_ax_gen_gyp,,,$(GYP_VAR_PREFIX))/ui_accessibility_ax_gen_gyp.a \
 	$(call intermediates-dir-for,STATIC_LIBRARIES,ui_base_ui_base_gyp,,,$(GYP_VAR_PREFIX))/ui_base_ui_base_gyp.a \
 	$(call intermediates-dir-for,GYP,content_content_resources_gyp,,,$(GYP_VAR_PREFIX))/content_resources.stamp \
+	$(call intermediates-dir-for,STATIC_LIBRARIES,mojo_mojo_application_bindings_gyp,,,$(GYP_VAR_PREFIX))/mojo_mojo_application_bindings_gyp.a \
 	$(call intermediates-dir-for,GYP,third_party_WebKit_public_blink_gyp,,,$(GYP_VAR_PREFIX))/blink.stamp \
 	$(call intermediates-dir-for,STATIC_LIBRARIES,ui_gl_gl_gyp,,,$(GYP_VAR_PREFIX))/ui_gl_gl_gyp.a \
 	$(call intermediates-dir-for,GYP,content_content_jni_headers_gyp,,,$(GYP_VAR_PREFIX))/content_jni_headers.stamp \
@@ -62,14 +62,15 @@ LOCAL_SRC_FILES := \
 	content/public/common/frame_navigate_params.cc \
 	content/public/common/geoposition.cc \
 	content/public/common/gpu_memory_stats.cc \
+	content/public/common/manifest.cc \
 	content/public/common/media_stream_request.cc \
 	content/public/common/menu_item.cc \
 	content/public/common/page_state.cc \
-	content/public/common/page_transition_types.cc \
-	content/public/common/pepper_plugin_info.cc \
+	content/public/common/push_messaging_status.cc \
 	content/public/common/renderer_preferences.cc \
 	content/public/common/resource_devtools_info.cc \
 	content/public/common/resource_response_info.cc \
+	content/public/common/resource_type.cc \
 	content/public/common/sandboxed_process_launcher_delegate.cc \
 	content/public/common/show_desktop_notification_params.cc \
 	content/public/common/signed_certificate_timestamp_id_and_status.cc \
@@ -77,6 +78,7 @@ LOCAL_SRC_FILES := \
 	content/public/common/ssl_status.cc \
 	content/public/common/url_constants.cc \
 	content/public/common/url_utils.cc \
+	content/public/common/web_preferences.cc \
 	content/public/common/webplugininfo.cc \
 	content/public/common/window_container_type.cc \
 	content/common/android/address_parser.cc \
@@ -87,6 +89,7 @@ LOCAL_SRC_FILES := \
 	content/common/android/hash_set.cc \
 	content/common/android/surface_texture_lookup.cc \
 	content/common/android/surface_texture_peer.cc \
+	content/common/appcache_interfaces.cc \
 	content/common/browser_plugin/browser_plugin_constants.cc \
 	content/common/cc_messages.cc \
 	content/common/child_process_host_impl.cc \
@@ -111,9 +114,11 @@ LOCAL_SRC_FILES := \
 	content/common/gpu/client/gl_helper_readback_support.cc \
 	content/common/gpu/client/gl_helper_scaling.cc \
 	content/common/gpu/client/gpu_channel_host.cc \
+	content/common/gpu/client/gpu_memory_buffer_factory_host.cc \
 	content/common/gpu/client/gpu_memory_buffer_impl.cc \
 	content/common/gpu/client/gpu_memory_buffer_impl_android.cc \
-	content/common/gpu/client/gpu_memory_buffer_impl_shm.cc \
+	content/common/gpu/client/gpu_memory_buffer_impl_ozone_native_buffer.cc \
+	content/common/gpu/client/gpu_memory_buffer_impl_shared_memory.cc \
 	content/common/gpu/client/gpu_video_decode_accelerator_host.cc \
 	content/common/gpu/client/gpu_video_encode_accelerator_host.cc \
 	content/common/gpu/client/webgraphicscontext3d_command_buffer_impl.cc \
@@ -122,6 +127,7 @@ LOCAL_SRC_FILES := \
 	content/common/gpu/gpu_channel.cc \
 	content/common/gpu/gpu_channel_manager.cc \
 	content/common/gpu/gpu_command_buffer_stub.cc \
+	content/common/gpu/gpu_memory_buffer_factory_android.cc \
 	content/common/gpu/gpu_memory_manager.cc \
 	content/common/gpu/gpu_memory_manager_client.cc \
 	content/common/gpu/gpu_memory_tracking.cc \
@@ -138,6 +144,7 @@ LOCAL_SRC_FILES := \
 	content/common/indexed_db/indexed_db_key_path.cc \
 	content/common/indexed_db/indexed_db_key_range.cc \
 	content/common/indexed_db/indexed_db_param_traits.cc \
+	content/common/input/did_overscroll_params.cc \
 	content/common/input/gesture_event_stream_validator.cc \
 	content/common/input/input_event.cc \
 	content/common/input/input_event_stream_validator.cc \
@@ -156,18 +163,17 @@ LOCAL_SRC_FILES := \
 	content/common/media/media_param_traits.cc \
 	content/common/media/media_stream_options.cc \
 	content/common/message_router.cc \
-	content/common/mojo/mojo_service_names.cc \
+	content/common/mojo/service_registry_impl.cc \
 	content/common/net/url_fetcher.cc \
 	content/common/net/url_request_user_data.cc \
 	content/common/one_writer_seqlock.cc \
 	content/common/page_state_serialization.cc \
 	content/common/page_zoom.cc \
-	content/common/pepper_renderer_instance_data.cc \
-	content/common/plugin_list.cc \
-	content/common/plugin_list_posix.cc \
 	content/common/process_type.cc \
 	content/common/resource_messages.cc \
 	content/common/resource_request_body.cc \
+	content/common/sandbox_linux/android/sandbox_bpf_base_policy_android.cc \
+	content/common/sandbox_linux/sandbox_bpf_base_policy_linux.cc \
 	content/common/savable_url_schemes.cc \
 	content/common/service_worker/service_worker_status_code.cc \
 	content/common/service_worker/service_worker_types.cc \
@@ -188,7 +194,6 @@ MY_CFLAGS_Debug := \
 	-fstack-protector \
 	--param=ssp-buffer-size=4 \
 	 \
-	-fno-exceptions \
 	-fno-strict-aliasing \
 	-Wall \
 	-Wno-unused-parameter \
@@ -197,8 +202,6 @@ MY_CFLAGS_Debug := \
 	-pipe \
 	-fPIC \
 	-Wno-unused-local-typedefs \
-	-EL \
-	-mhard-float \
 	-ffunction-sections \
 	-funwind-tables \
 	-g \
@@ -213,6 +216,7 @@ MY_CFLAGS_Debug := \
 	-Wno-unused-but-set-variable \
 	-Os \
 	-g \
+	-gdwarf-4 \
 	-fdata-sections \
 	-ffunction-sections \
 	-fomit-frame-pointer \
@@ -221,7 +225,6 @@ MY_CFLAGS_Debug := \
 MY_DEFS_Debug := \
 	'-DCONTENT_IMPLEMENTATION' \
 	'-DV8_DEPRECATION_WARNINGS' \
-	'-DBLINK_SCALE_FILTERS_AT_RECORD_TIME' \
 	'-D_FILE_OFFSET_BITS=64' \
 	'-DNO_TCMALLOC' \
 	'-DDISABLE_NACL' \
@@ -238,11 +241,14 @@ MY_DEFS_Debug := \
 	'-DENABLE_PRINTING=1' \
 	'-DENABLE_MANAGED_USERS=1' \
 	'-DDATA_REDUCTION_FALLBACK_HOST="http://compress.googlezip.net:80/"' \
-	'-DDATA_REDUCTION_DEV_HOST="http://proxy-dev.googlezip.net:80/"' \
+	'-DDATA_REDUCTION_DEV_HOST="https://proxy-dev.googlezip.net:443/"' \
+	'-DDATA_REDUCTION_DEV_FALLBACK_HOST="http://proxy-dev.googlezip.net:80/"' \
 	'-DSPDY_PROXY_AUTH_ORIGIN="https://proxy.googlezip.net:443/"' \
 	'-DDATA_REDUCTION_PROXY_PROBE_URL="http://check.googlezip.net/connect"' \
 	'-DDATA_REDUCTION_PROXY_WARMUP_URL="http://www.gstatic.com/generate_204"' \
 	'-DVIDEO_HOLE=1' \
+	'-DENABLE_LOAD_COMPLETION_HACKS=1' \
+	'-DUSE_SECCOMP_BPF' \
 	'-DMOJO_USE_SYSTEM_IMPL' \
 	'-DPOSIX_AVOID_MMAP' \
 	'-DSK_ENABLE_INST_COUNT=0' \
@@ -252,18 +258,18 @@ MY_DEFS_Debug := \
 	'-DSK_ATTR_DEPRECATED=SK_NOTHING_ARG1' \
 	'-DGR_GL_IGNORE_ES3_MSAA=0' \
 	'-DSK_WILL_NEVER_DRAW_PERSPECTIVE_TEXT' \
-	'-DSK_SUPPORT_LEGACY_GETTOPDEVICE' \
-	'-DSK_SUPPORT_LEGACY_BITMAP_CONFIG' \
-	'-DSK_SUPPORT_LEGACY_DEVICE_VIRTUAL_ISOPAQUE' \
-	'-DSK_SUPPORT_LEGACY_N32_NAME' \
-	'-DSK_SUPPORT_LEGACY_SETCONFIG' \
-	'-DSK_IGNORE_ETC1_SUPPORT' \
-	'-DSK_IGNORE_GPU_DITHER' \
-	'-DSK_SUPPORT_LEGACY_GETTOTALCLIP' \
+	'-DSK_SUPPORT_LEGACY_TEXTRENDERMODE' \
 	'-DSK_BUILD_FOR_ANDROID' \
 	'-DSK_USE_POSIX_THREADS' \
 	'-DSK_DEFERRED_CANVAS_USES_FACTORIES=1' \
+	'-DSK_FM_NEW_MATCH_FAMILY_STYLE_CHARACTER=1' \
 	'-DU_USING_ICU_NAMESPACE=0' \
+	'-DU_ENABLE_DYLOAD=0' \
+	'-DMEDIA_DISABLE_LIBVPX' \
+	'-DCHROME_PNG_WRITE_SUPPORT' \
+	'-DPNG_USER_CONFIG' \
+	'-DCHROME_PNG_READ_PACK_SUPPORT' \
+	'-DMESA_EGL_NO_X11_HEADERS' \
 	'-DFEATURE_ENABLE_SSL' \
 	'-DFEATURE_ENABLE_VOICEMAIL' \
 	'-DEXPAT_RELATIVE_PATH' \
@@ -272,13 +278,8 @@ MY_DEFS_Debug := \
 	'-DNO_SOUND_SYSTEM' \
 	'-DANDROID' \
 	'-DPOSIX' \
-	'-DMEDIA_DISABLE_LIBVPX' \
-	'-DCHROME_PNG_WRITE_SUPPORT' \
-	'-DPNG_USER_CONFIG' \
-	'-DCHROME_PNG_READ_PACK_SUPPORT' \
-	'-DUSE_SYSTEM_LIBJPEG' \
-	'-DMESA_EGL_NO_X11_HEADERS' \
-	'-DAPPCACHE_USE_SIMPLE_CACHE' \
+	'-DWEBRTC_POSIX' \
+	'-DXML_STATIC' \
 	'-DUSE_OPENSSL=1' \
 	'-DUSE_OPENSSL_CERTS=1' \
 	'-D__STDC_CONSTANT_MACROS' \
@@ -296,7 +297,6 @@ MY_DEFS_Debug := \
 LOCAL_C_INCLUDES_Debug := \
 	$(gyp_shared_intermediate_dir)/shim_headers/icuuc/target \
 	$(gyp_shared_intermediate_dir)/shim_headers/icui18n/target \
-	$(gyp_shared_intermediate_dir)/shim_headers/ashmem/target \
 	$(gyp_shared_intermediate_dir) \
 	$(LOCAL_PATH) \
 	$(LOCAL_PATH)/third_party/khronos \
@@ -317,14 +317,7 @@ LOCAL_C_INCLUDES_Debug := \
 	$(LOCAL_PATH)/third_party/WebKit \
 	$(PWD)/external/icu/icu4c/source/common \
 	$(PWD)/external/icu/icu4c/source/i18n \
-	$(LOCAL_PATH)/third_party/libjingle/overrides \
-	$(LOCAL_PATH)/third_party/libjingle/source \
-	$(LOCAL_PATH)/third_party/webrtc/overrides \
-	$(LOCAL_PATH)/testing/gtest/include \
-	$(LOCAL_PATH)/third_party \
-	$(LOCAL_PATH)/third_party/webrtc \
-	$(PWD)/external/expat/lib \
-	$(gyp_shared_intermediate_dir)/content \
+	$(LOCAL_PATH)/ipc \
 	$(LOCAL_PATH)/third_party/WebKit \
 	$(LOCAL_PATH)/third_party/npapi \
 	$(LOCAL_PATH)/third_party/npapi/bindings \
@@ -335,11 +328,18 @@ LOCAL_C_INCLUDES_Debug := \
 	$(LOCAL_PATH)/third_party/ots/include \
 	$(LOCAL_PATH)/third_party/qcms/src \
 	$(LOCAL_PATH)/third_party/iccjpeg \
-	$(PWD)/external/jpeg \
+	$(LOCAL_PATH)/third_party/libjpeg_turbo \
 	$(gyp_shared_intermediate_dir)/ui/gl \
 	$(LOCAL_PATH)/third_party/mesa/src/include \
+	$(gyp_shared_intermediate_dir)/content \
 	$(LOCAL_PATH)/third_party/libyuv/include \
 	$(LOCAL_PATH)/third_party/libyuv \
+	$(LOCAL_PATH)/third_party/webrtc/overrides \
+	$(LOCAL_PATH)/third_party/libjingle/overrides \
+	$(LOCAL_PATH)/third_party/libjingle/source \
+	$(LOCAL_PATH)/testing/gtest/include \
+	$(LOCAL_PATH)/third_party \
+	$(LOCAL_PATH)/third_party/expat/files/lib \
 	$(PWD)/frameworks/wilhelm/include \
 	$(PWD)/bionic \
 	$(PWD)/external/stlport/stlport
@@ -347,23 +347,24 @@ LOCAL_C_INCLUDES_Debug := \
 
 # Flags passed to only C++ (and not C) files.
 LOCAL_CPPFLAGS_Debug := \
+	-fno-exceptions \
 	-fno-rtti \
 	-fno-threadsafe-statics \
 	-fvisibility-inlines-hidden \
 	-Wsign-compare \
 	-Wno-uninitialized \
+	-std=gnu++11 \
+	-Wno-narrowing \
+	-Wno-literal-suffix \
 	-Wno-non-virtual-dtor \
 	-Wno-sign-promo
 
-
-LOCAL_FDO_SUPPORT_Debug := false
 
 # Flags passed to both C and C++ files.
 MY_CFLAGS_Release := \
 	-fstack-protector \
 	--param=ssp-buffer-size=4 \
 	 \
-	-fno-exceptions \
 	-fno-strict-aliasing \
 	-Wall \
 	-Wno-unused-parameter \
@@ -372,8 +373,6 @@ MY_CFLAGS_Release := \
 	-pipe \
 	-fPIC \
 	-Wno-unused-local-typedefs \
-	-EL \
-	-mhard-float \
 	-ffunction-sections \
 	-funwind-tables \
 	-g \
@@ -396,7 +395,6 @@ MY_CFLAGS_Release := \
 MY_DEFS_Release := \
 	'-DCONTENT_IMPLEMENTATION' \
 	'-DV8_DEPRECATION_WARNINGS' \
-	'-DBLINK_SCALE_FILTERS_AT_RECORD_TIME' \
 	'-D_FILE_OFFSET_BITS=64' \
 	'-DNO_TCMALLOC' \
 	'-DDISABLE_NACL' \
@@ -413,11 +411,14 @@ MY_DEFS_Release := \
 	'-DENABLE_PRINTING=1' \
 	'-DENABLE_MANAGED_USERS=1' \
 	'-DDATA_REDUCTION_FALLBACK_HOST="http://compress.googlezip.net:80/"' \
-	'-DDATA_REDUCTION_DEV_HOST="http://proxy-dev.googlezip.net:80/"' \
+	'-DDATA_REDUCTION_DEV_HOST="https://proxy-dev.googlezip.net:443/"' \
+	'-DDATA_REDUCTION_DEV_FALLBACK_HOST="http://proxy-dev.googlezip.net:80/"' \
 	'-DSPDY_PROXY_AUTH_ORIGIN="https://proxy.googlezip.net:443/"' \
 	'-DDATA_REDUCTION_PROXY_PROBE_URL="http://check.googlezip.net/connect"' \
 	'-DDATA_REDUCTION_PROXY_WARMUP_URL="http://www.gstatic.com/generate_204"' \
 	'-DVIDEO_HOLE=1' \
+	'-DENABLE_LOAD_COMPLETION_HACKS=1' \
+	'-DUSE_SECCOMP_BPF' \
 	'-DMOJO_USE_SYSTEM_IMPL' \
 	'-DPOSIX_AVOID_MMAP' \
 	'-DSK_ENABLE_INST_COUNT=0' \
@@ -427,18 +428,18 @@ MY_DEFS_Release := \
 	'-DSK_ATTR_DEPRECATED=SK_NOTHING_ARG1' \
 	'-DGR_GL_IGNORE_ES3_MSAA=0' \
 	'-DSK_WILL_NEVER_DRAW_PERSPECTIVE_TEXT' \
-	'-DSK_SUPPORT_LEGACY_GETTOPDEVICE' \
-	'-DSK_SUPPORT_LEGACY_BITMAP_CONFIG' \
-	'-DSK_SUPPORT_LEGACY_DEVICE_VIRTUAL_ISOPAQUE' \
-	'-DSK_SUPPORT_LEGACY_N32_NAME' \
-	'-DSK_SUPPORT_LEGACY_SETCONFIG' \
-	'-DSK_IGNORE_ETC1_SUPPORT' \
-	'-DSK_IGNORE_GPU_DITHER' \
-	'-DSK_SUPPORT_LEGACY_GETTOTALCLIP' \
+	'-DSK_SUPPORT_LEGACY_TEXTRENDERMODE' \
 	'-DSK_BUILD_FOR_ANDROID' \
 	'-DSK_USE_POSIX_THREADS' \
 	'-DSK_DEFERRED_CANVAS_USES_FACTORIES=1' \
+	'-DSK_FM_NEW_MATCH_FAMILY_STYLE_CHARACTER=1' \
 	'-DU_USING_ICU_NAMESPACE=0' \
+	'-DU_ENABLE_DYLOAD=0' \
+	'-DMEDIA_DISABLE_LIBVPX' \
+	'-DCHROME_PNG_WRITE_SUPPORT' \
+	'-DPNG_USER_CONFIG' \
+	'-DCHROME_PNG_READ_PACK_SUPPORT' \
+	'-DMESA_EGL_NO_X11_HEADERS' \
 	'-DFEATURE_ENABLE_SSL' \
 	'-DFEATURE_ENABLE_VOICEMAIL' \
 	'-DEXPAT_RELATIVE_PATH' \
@@ -447,13 +448,8 @@ MY_DEFS_Release := \
 	'-DNO_SOUND_SYSTEM' \
 	'-DANDROID' \
 	'-DPOSIX' \
-	'-DMEDIA_DISABLE_LIBVPX' \
-	'-DCHROME_PNG_WRITE_SUPPORT' \
-	'-DPNG_USER_CONFIG' \
-	'-DCHROME_PNG_READ_PACK_SUPPORT' \
-	'-DUSE_SYSTEM_LIBJPEG' \
-	'-DMESA_EGL_NO_X11_HEADERS' \
-	'-DAPPCACHE_USE_SIMPLE_CACHE' \
+	'-DWEBRTC_POSIX' \
+	'-DXML_STATIC' \
 	'-DUSE_OPENSSL=1' \
 	'-DUSE_OPENSSL_CERTS=1' \
 	'-D__STDC_CONSTANT_MACROS' \
@@ -472,7 +468,6 @@ MY_DEFS_Release := \
 LOCAL_C_INCLUDES_Release := \
 	$(gyp_shared_intermediate_dir)/shim_headers/icuuc/target \
 	$(gyp_shared_intermediate_dir)/shim_headers/icui18n/target \
-	$(gyp_shared_intermediate_dir)/shim_headers/ashmem/target \
 	$(gyp_shared_intermediate_dir) \
 	$(LOCAL_PATH) \
 	$(LOCAL_PATH)/third_party/khronos \
@@ -493,14 +488,7 @@ LOCAL_C_INCLUDES_Release := \
 	$(LOCAL_PATH)/third_party/WebKit \
 	$(PWD)/external/icu/icu4c/source/common \
 	$(PWD)/external/icu/icu4c/source/i18n \
-	$(LOCAL_PATH)/third_party/libjingle/overrides \
-	$(LOCAL_PATH)/third_party/libjingle/source \
-	$(LOCAL_PATH)/third_party/webrtc/overrides \
-	$(LOCAL_PATH)/testing/gtest/include \
-	$(LOCAL_PATH)/third_party \
-	$(LOCAL_PATH)/third_party/webrtc \
-	$(PWD)/external/expat/lib \
-	$(gyp_shared_intermediate_dir)/content \
+	$(LOCAL_PATH)/ipc \
 	$(LOCAL_PATH)/third_party/WebKit \
 	$(LOCAL_PATH)/third_party/npapi \
 	$(LOCAL_PATH)/third_party/npapi/bindings \
@@ -511,11 +499,18 @@ LOCAL_C_INCLUDES_Release := \
 	$(LOCAL_PATH)/third_party/ots/include \
 	$(LOCAL_PATH)/third_party/qcms/src \
 	$(LOCAL_PATH)/third_party/iccjpeg \
-	$(PWD)/external/jpeg \
+	$(LOCAL_PATH)/third_party/libjpeg_turbo \
 	$(gyp_shared_intermediate_dir)/ui/gl \
 	$(LOCAL_PATH)/third_party/mesa/src/include \
+	$(gyp_shared_intermediate_dir)/content \
 	$(LOCAL_PATH)/third_party/libyuv/include \
 	$(LOCAL_PATH)/third_party/libyuv \
+	$(LOCAL_PATH)/third_party/webrtc/overrides \
+	$(LOCAL_PATH)/third_party/libjingle/overrides \
+	$(LOCAL_PATH)/third_party/libjingle/source \
+	$(LOCAL_PATH)/testing/gtest/include \
+	$(LOCAL_PATH)/third_party \
+	$(LOCAL_PATH)/third_party/expat/files/lib \
 	$(PWD)/frameworks/wilhelm/include \
 	$(PWD)/bionic \
 	$(PWD)/external/stlport/stlport
@@ -523,68 +518,24 @@ LOCAL_C_INCLUDES_Release := \
 
 # Flags passed to only C++ (and not C) files.
 LOCAL_CPPFLAGS_Release := \
+	-fno-exceptions \
 	-fno-rtti \
 	-fno-threadsafe-statics \
 	-fvisibility-inlines-hidden \
 	-Wsign-compare \
 	-Wno-uninitialized \
+	-std=gnu++11 \
+	-Wno-narrowing \
+	-Wno-literal-suffix \
 	-Wno-non-virtual-dtor \
 	-Wno-sign-promo
 
 
-LOCAL_FDO_SUPPORT_Release := false
-
 LOCAL_CFLAGS := $(MY_CFLAGS_$(GYP_CONFIGURATION)) $(MY_DEFS_$(GYP_CONFIGURATION))
-LOCAL_FDO_SUPPORT := $(LOCAL_FDO_SUPPORT_$(GYP_CONFIGURATION))
 LOCAL_C_INCLUDES := $(GYP_COPIED_SOURCE_ORIGIN_DIRS) $(LOCAL_C_INCLUDES_$(GYP_CONFIGURATION))
 LOCAL_CPPFLAGS := $(LOCAL_CPPFLAGS_$(GYP_CONFIGURATION))
 LOCAL_ASFLAGS := $(LOCAL_CFLAGS)
 ### Rules for final target.
-
-LOCAL_LDFLAGS_Debug := \
-	-Wl,-z,now \
-	-Wl,-z,relro \
-	-Wl,--fatal-warnings \
-	-Wl,-z,noexecstack \
-	-fPIC \
-	-EL \
-	-Wl,--no-keep-memory \
-	-nostdlib \
-	-Wl,--no-undefined \
-	-Wl,--exclude-libs=ALL \
-	-Wl,--warn-shared-textrel \
-	-Wl,-O1 \
-	-Wl,--as-needed
-
-
-LOCAL_LDFLAGS_Release := \
-	-Wl,-z,now \
-	-Wl,-z,relro \
-	-Wl,--fatal-warnings \
-	-Wl,-z,noexecstack \
-	-fPIC \
-	-EL \
-	-Wl,--no-keep-memory \
-	-nostdlib \
-	-Wl,--no-undefined \
-	-Wl,--exclude-libs=ALL \
-	-Wl,-O1 \
-	-Wl,--as-needed \
-	-Wl,--gc-sections \
-	-Wl,--warn-shared-textrel
-
-
-LOCAL_LDFLAGS := $(LOCAL_LDFLAGS_$(GYP_CONFIGURATION))
-
-LOCAL_STATIC_LIBRARIES := \
-	skia_skia_library_gyp \
-	ui_accessibility_accessibility_gyp \
-	ui_accessibility_ax_gen_gyp \
-	ui_base_ui_base_gyp \
-	ui_gl_gl_gyp
-
-# Enable grouping to fix circular references
-LOCAL_GROUP_STATIC_LIBRARIES := true
 
 LOCAL_SHARED_LIBRARIES := \
 	libstlport \

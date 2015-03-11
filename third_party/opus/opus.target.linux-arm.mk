@@ -5,7 +5,6 @@ include $(CLEAR_VARS)
 LOCAL_MODULE_CLASS := STATIC_LIBRARIES
 LOCAL_MODULE := third_party_opus_opus_gyp
 LOCAL_MODULE_SUFFIX := .a
-LOCAL_MODULE_TAGS := optional
 LOCAL_MODULE_TARGET_ARCH := $(TARGET_$(GYP_VAR_PREFIX)ARCH)
 gyp_intermediate_dir := $(call local-intermediates-dir,,$(GYP_VAR_PREFIX))
 gyp_shared_intermediate_dir := $(call intermediates-dir-for,GYP,shared,,,$(GYP_VAR_PREFIX))
@@ -78,31 +77,6 @@ LOCAL_SRC_FILES := \
 	third_party/opus/src/silk/enc_API.c \
 	third_party/opus/src/silk/encode_indices.c \
 	third_party/opus/src/silk/encode_pulses.c \
-	third_party/opus/src/silk/fixed/apply_sine_window_FIX.c \
-	third_party/opus/src/silk/fixed/autocorr_FIX.c \
-	third_party/opus/src/silk/fixed/burg_modified_FIX.c \
-	third_party/opus/src/silk/fixed/corrMatrix_FIX.c \
-	third_party/opus/src/silk/fixed/encode_frame_FIX.c \
-	third_party/opus/src/silk/fixed/find_LPC_FIX.c \
-	third_party/opus/src/silk/fixed/find_LTP_FIX.c \
-	third_party/opus/src/silk/fixed/find_pitch_lags_FIX.c \
-	third_party/opus/src/silk/fixed/find_pred_coefs_FIX.c \
-	third_party/opus/src/silk/fixed/k2a_FIX.c \
-	third_party/opus/src/silk/fixed/k2a_Q16_FIX.c \
-	third_party/opus/src/silk/fixed/LTP_analysis_filter_FIX.c \
-	third_party/opus/src/silk/fixed/LTP_scale_ctrl_FIX.c \
-	third_party/opus/src/silk/fixed/noise_shape_analysis_FIX.c \
-	third_party/opus/src/silk/fixed/pitch_analysis_core_FIX.c \
-	third_party/opus/src/silk/fixed/prefilter_FIX.c \
-	third_party/opus/src/silk/fixed/process_gains_FIX.c \
-	third_party/opus/src/silk/fixed/regularize_correlations_FIX.c \
-	third_party/opus/src/silk/fixed/residual_energy16_FIX.c \
-	third_party/opus/src/silk/fixed/residual_energy_FIX.c \
-	third_party/opus/src/silk/fixed/schur64_FIX.c \
-	third_party/opus/src/silk/fixed/schur_FIX.c \
-	third_party/opus/src/silk/fixed/solve_LS_FIX.c \
-	third_party/opus/src/silk/fixed/vector_ops_FIX.c \
-	third_party/opus/src/silk/fixed/warped_autocorrelation_FIX.c \
 	third_party/opus/src/silk/gain_quant.c \
 	third_party/opus/src/silk/HP_variable_cutoff.c \
 	third_party/opus/src/silk/init_decoder.c \
@@ -166,6 +140,31 @@ LOCAL_SRC_FILES := \
 	third_party/opus/src/src/opus_multistream_decoder.c \
 	third_party/opus/src/src/opus_multistream_encoder.c \
 	third_party/opus/src/src/repacketizer.c \
+	third_party/opus/src/silk/fixed/apply_sine_window_FIX.c \
+	third_party/opus/src/silk/fixed/autocorr_FIX.c \
+	third_party/opus/src/silk/fixed/burg_modified_FIX.c \
+	third_party/opus/src/silk/fixed/corrMatrix_FIX.c \
+	third_party/opus/src/silk/fixed/encode_frame_FIX.c \
+	third_party/opus/src/silk/fixed/find_LPC_FIX.c \
+	third_party/opus/src/silk/fixed/find_LTP_FIX.c \
+	third_party/opus/src/silk/fixed/find_pitch_lags_FIX.c \
+	third_party/opus/src/silk/fixed/find_pred_coefs_FIX.c \
+	third_party/opus/src/silk/fixed/k2a_FIX.c \
+	third_party/opus/src/silk/fixed/k2a_Q16_FIX.c \
+	third_party/opus/src/silk/fixed/LTP_analysis_filter_FIX.c \
+	third_party/opus/src/silk/fixed/LTP_scale_ctrl_FIX.c \
+	third_party/opus/src/silk/fixed/noise_shape_analysis_FIX.c \
+	third_party/opus/src/silk/fixed/pitch_analysis_core_FIX.c \
+	third_party/opus/src/silk/fixed/prefilter_FIX.c \
+	third_party/opus/src/silk/fixed/process_gains_FIX.c \
+	third_party/opus/src/silk/fixed/regularize_correlations_FIX.c \
+	third_party/opus/src/silk/fixed/residual_energy16_FIX.c \
+	third_party/opus/src/silk/fixed/residual_energy_FIX.c \
+	third_party/opus/src/silk/fixed/schur64_FIX.c \
+	third_party/opus/src/silk/fixed/schur_FIX.c \
+	third_party/opus/src/silk/fixed/solve_LS_FIX.c \
+	third_party/opus/src/silk/fixed/vector_ops_FIX.c \
+	third_party/opus/src/silk/fixed/warped_autocorrelation_FIX.c \
 	third_party/opus/src/celt/arm/arm_celt_map.c \
 	third_party/opus/src/celt/arm/armcpu.c
 
@@ -174,7 +173,6 @@ LOCAL_SRC_FILES := \
 MY_CFLAGS_Debug := \
 	-fstack-protector \
 	--param=ssp-buffer-size=4 \
-	-fno-exceptions \
 	-fno-strict-aliasing \
 	-Wno-unused-parameter \
 	-Wno-missing-field-initializers \
@@ -185,13 +183,13 @@ MY_CFLAGS_Debug := \
 	-O3 \
 	-Wno-format \
 	-fno-tree-sra \
+	-fno-caller-saves \
+	-Wno-psabi \
 	-fno-partial-inlining \
 	-fno-early-inlining \
 	-fno-tree-copy-prop \
 	-fno-tree-loop-optimize \
 	-fno-move-loop-invariants \
-	-fno-caller-saves \
-	-Wno-psabi \
 	-ffunction-sections \
 	-funwind-tables \
 	-g \
@@ -209,6 +207,7 @@ MY_CFLAGS_Debug := \
 	-Wno-return-type \
 	-Wno-sequence-point \
 	-g \
+	-gdwarf-4 \
 	-fdata-sections \
 	-ffunction-sections \
 	-fomit-frame-pointer \
@@ -216,7 +215,6 @@ MY_CFLAGS_Debug := \
 
 MY_DEFS_Debug := \
 	'-DV8_DEPRECATION_WARNINGS' \
-	'-DBLINK_SCALE_FILTERS_AT_RECORD_TIME' \
 	'-D_FILE_OFFSET_BITS=64' \
 	'-DNO_TCMALLOC' \
 	'-DDISABLE_NACL' \
@@ -233,11 +231,13 @@ MY_DEFS_Debug := \
 	'-DENABLE_PRINTING=1' \
 	'-DENABLE_MANAGED_USERS=1' \
 	'-DDATA_REDUCTION_FALLBACK_HOST="http://compress.googlezip.net:80/"' \
-	'-DDATA_REDUCTION_DEV_HOST="http://proxy-dev.googlezip.net:80/"' \
+	'-DDATA_REDUCTION_DEV_HOST="https://proxy-dev.googlezip.net:443/"' \
+	'-DDATA_REDUCTION_DEV_FALLBACK_HOST="http://proxy-dev.googlezip.net:80/"' \
 	'-DSPDY_PROXY_AUTH_ORIGIN="https://proxy.googlezip.net:443/"' \
 	'-DDATA_REDUCTION_PROXY_PROBE_URL="http://check.googlezip.net/connect"' \
 	'-DDATA_REDUCTION_PROXY_WARMUP_URL="http://www.gstatic.com/generate_204"' \
 	'-DVIDEO_HOLE=1' \
+	'-DENABLE_LOAD_COMPLETION_HACKS=1' \
 	'-DOPUS_BUILD' \
 	'-DOPUS_EXPORT=' \
 	'-DHAVE_LRINT' \
@@ -277,23 +277,24 @@ LOCAL_C_INCLUDES_Debug := \
 
 # Flags passed to only C++ (and not C) files.
 LOCAL_CPPFLAGS_Debug := \
+	-fno-exceptions \
 	-fno-rtti \
 	-fno-threadsafe-statics \
 	-fvisibility-inlines-hidden \
 	-Wno-deprecated \
 	-Wno-abi \
+	-std=gnu++11 \
+	-Wno-narrowing \
+	-Wno-literal-suffix \
 	-Wno-non-virtual-dtor \
 	-Wno-sign-promo \
 	-Wno-non-virtual-dtor
 
 
-LOCAL_FDO_SUPPORT_Debug := false
-
 # Flags passed to both C and C++ files.
 MY_CFLAGS_Release := \
 	-fstack-protector \
 	--param=ssp-buffer-size=4 \
-	-fno-exceptions \
 	-fno-strict-aliasing \
 	-Wno-unused-parameter \
 	-Wno-missing-field-initializers \
@@ -304,13 +305,13 @@ MY_CFLAGS_Release := \
 	-O3 \
 	-Wno-format \
 	-fno-tree-sra \
+	-fno-caller-saves \
+	-Wno-psabi \
 	-fno-partial-inlining \
 	-fno-early-inlining \
 	-fno-tree-copy-prop \
 	-fno-tree-loop-optimize \
 	-fno-move-loop-invariants \
-	-fno-caller-saves \
-	-Wno-psabi \
 	-ffunction-sections \
 	-funwind-tables \
 	-g \
@@ -335,7 +336,6 @@ MY_CFLAGS_Release := \
 
 MY_DEFS_Release := \
 	'-DV8_DEPRECATION_WARNINGS' \
-	'-DBLINK_SCALE_FILTERS_AT_RECORD_TIME' \
 	'-D_FILE_OFFSET_BITS=64' \
 	'-DNO_TCMALLOC' \
 	'-DDISABLE_NACL' \
@@ -352,11 +352,13 @@ MY_DEFS_Release := \
 	'-DENABLE_PRINTING=1' \
 	'-DENABLE_MANAGED_USERS=1' \
 	'-DDATA_REDUCTION_FALLBACK_HOST="http://compress.googlezip.net:80/"' \
-	'-DDATA_REDUCTION_DEV_HOST="http://proxy-dev.googlezip.net:80/"' \
+	'-DDATA_REDUCTION_DEV_HOST="https://proxy-dev.googlezip.net:443/"' \
+	'-DDATA_REDUCTION_DEV_FALLBACK_HOST="http://proxy-dev.googlezip.net:80/"' \
 	'-DSPDY_PROXY_AUTH_ORIGIN="https://proxy.googlezip.net:443/"' \
 	'-DDATA_REDUCTION_PROXY_PROBE_URL="http://check.googlezip.net/connect"' \
 	'-DDATA_REDUCTION_PROXY_WARMUP_URL="http://www.gstatic.com/generate_204"' \
 	'-DVIDEO_HOLE=1' \
+	'-DENABLE_LOAD_COMPLETION_HACKS=1' \
 	'-DOPUS_BUILD' \
 	'-DOPUS_EXPORT=' \
 	'-DHAVE_LRINT' \
@@ -396,68 +398,25 @@ LOCAL_C_INCLUDES_Release := \
 
 # Flags passed to only C++ (and not C) files.
 LOCAL_CPPFLAGS_Release := \
+	-fno-exceptions \
 	-fno-rtti \
 	-fno-threadsafe-statics \
 	-fvisibility-inlines-hidden \
 	-Wno-deprecated \
 	-Wno-abi \
+	-std=gnu++11 \
+	-Wno-narrowing \
+	-Wno-literal-suffix \
 	-Wno-non-virtual-dtor \
 	-Wno-sign-promo \
 	-Wno-non-virtual-dtor
 
 
-LOCAL_FDO_SUPPORT_Release := false
-
 LOCAL_CFLAGS := $(MY_CFLAGS_$(GYP_CONFIGURATION)) $(MY_DEFS_$(GYP_CONFIGURATION))
-LOCAL_FDO_SUPPORT := $(LOCAL_FDO_SUPPORT_$(GYP_CONFIGURATION))
 LOCAL_C_INCLUDES := $(GYP_COPIED_SOURCE_ORIGIN_DIRS) $(LOCAL_C_INCLUDES_$(GYP_CONFIGURATION))
 LOCAL_CPPFLAGS := $(LOCAL_CPPFLAGS_$(GYP_CONFIGURATION))
 LOCAL_ASFLAGS := $(LOCAL_CFLAGS)
 ### Rules for final target.
-
-LOCAL_LDFLAGS_Debug := \
-	-Wl,-z,now \
-	-Wl,-z,relro \
-	-Wl,--fatal-warnings \
-	-Wl,-z,noexecstack \
-	-fPIC \
-	-Wl,-z,relro \
-	-Wl,-z,now \
-	-fuse-ld=gold \
-	-nostdlib \
-	-Wl,--no-undefined \
-	-Wl,--exclude-libs=ALL \
-	-Wl,--icf=safe \
-	-Wl,--warn-shared-textrel \
-	-Wl,-O1 \
-	-Wl,--as-needed
-
-
-LOCAL_LDFLAGS_Release := \
-	-Wl,-z,now \
-	-Wl,-z,relro \
-	-Wl,--fatal-warnings \
-	-Wl,-z,noexecstack \
-	-fPIC \
-	-Wl,-z,relro \
-	-Wl,-z,now \
-	-fuse-ld=gold \
-	-nostdlib \
-	-Wl,--no-undefined \
-	-Wl,--exclude-libs=ALL \
-	-Wl,--icf=safe \
-	-Wl,-O1 \
-	-Wl,--as-needed \
-	-Wl,--gc-sections \
-	-Wl,--warn-shared-textrel
-
-
-LOCAL_LDFLAGS := $(LOCAL_LDFLAGS_$(GYP_CONFIGURATION))
-
-LOCAL_STATIC_LIBRARIES :=
-
-# Enable grouping to fix circular references
-LOCAL_GROUP_STATIC_LIBRARIES := true
 
 LOCAL_SHARED_LIBRARIES := \
 	libstlport \

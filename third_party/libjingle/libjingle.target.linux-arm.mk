@@ -5,14 +5,13 @@ include $(CLEAR_VARS)
 LOCAL_MODULE_CLASS := STATIC_LIBRARIES
 LOCAL_MODULE := third_party_libjingle_libjingle_gyp
 LOCAL_MODULE_SUFFIX := .a
-LOCAL_MODULE_TAGS := optional
 LOCAL_MODULE_TARGET_ARCH := $(TARGET_$(GYP_VAR_PREFIX)ARCH)
 gyp_intermediate_dir := $(call local-intermediates-dir,,$(GYP_VAR_PREFIX))
 gyp_shared_intermediate_dir := $(call intermediates-dir-for,GYP,shared,,,$(GYP_VAR_PREFIX))
 
 # Make sure our deps are built first.
 GYP_TARGET_DEPENDENCIES := \
-	$(call intermediates-dir-for,GYP,third_party_expat_expat_gyp,,,$(GYP_VAR_PREFIX))/expat.stamp
+	$(call intermediates-dir-for,GYP,third_party_webrtc_base_webrtc_base_gyp,,,$(GYP_VAR_PREFIX))/webrtc_base.stamp
 
 GYP_GENERATED_OUTPUTS :=
 
@@ -25,76 +24,6 @@ LOCAL_GENERATED_SOURCES :=
 GYP_COPIED_SOURCE_ORIGIN_DIRS :=
 
 LOCAL_SRC_FILES := \
-	third_party/libjingle/overrides/talk/base/logging.cc \
-	third_party/libjingle/source/talk/base/asyncfile.cc \
-	third_party/libjingle/source/talk/base/asynchttprequest.cc \
-	third_party/libjingle/source/talk/base/asyncsocket.cc \
-	third_party/libjingle/source/talk/base/asynctcpsocket.cc \
-	third_party/libjingle/source/talk/base/asyncudpsocket.cc \
-	third_party/libjingle/source/talk/base/autodetectproxy.cc \
-	third_party/libjingle/source/talk/base/base64.cc \
-	third_party/libjingle/source/talk/base/bytebuffer.cc \
-	third_party/libjingle/source/talk/base/checks.cc \
-	third_party/libjingle/source/talk/base/common.cc \
-	third_party/libjingle/source/talk/base/cpumonitor.cc \
-	third_party/libjingle/source/talk/base/crc32.cc \
-	third_party/libjingle/source/talk/base/diskcache.cc \
-	third_party/libjingle/source/talk/base/event.cc \
-	third_party/libjingle/source/talk/base/fileutils.cc \
-	third_party/libjingle/source/talk/base/firewallsocketserver.cc \
-	third_party/libjingle/source/talk/base/flags.cc \
-	third_party/libjingle/source/talk/base/helpers.cc \
-	third_party/libjingle/source/talk/base/httpbase.cc \
-	third_party/libjingle/source/talk/base/httpclient.cc \
-	third_party/libjingle/source/talk/base/httpcommon.cc \
-	third_party/libjingle/source/talk/base/httprequest.cc \
-	third_party/libjingle/source/talk/base/ifaddrs-android.cc \
-	third_party/libjingle/source/talk/base/ipaddress.cc \
-	third_party/libjingle/source/talk/base/linux.cc \
-	third_party/libjingle/source/talk/base/md5.cc \
-	third_party/libjingle/source/talk/base/messagedigest.cc \
-	third_party/libjingle/source/talk/base/messagehandler.cc \
-	third_party/libjingle/source/talk/base/messagequeue.cc \
-	third_party/libjingle/source/talk/base/nethelpers.cc \
-	third_party/libjingle/source/talk/base/network.cc \
-	third_party/libjingle/source/talk/base/nssidentity.cc \
-	third_party/libjingle/source/talk/base/nssstreamadapter.cc \
-	third_party/libjingle/source/talk/base/openssladapter.cc \
-	third_party/libjingle/source/talk/base/openssldigest.cc \
-	third_party/libjingle/source/talk/base/opensslidentity.cc \
-	third_party/libjingle/source/talk/base/opensslstreamadapter.cc \
-	third_party/libjingle/source/talk/base/pathutils.cc \
-	third_party/libjingle/source/talk/base/physicalsocketserver.cc \
-	third_party/libjingle/source/talk/base/proxydetect.cc \
-	third_party/libjingle/source/talk/base/proxyinfo.cc \
-	third_party/libjingle/source/talk/base/ratelimiter.cc \
-	third_party/libjingle/source/talk/base/ratetracker.cc \
-	third_party/libjingle/source/talk/base/sha1.cc \
-	third_party/libjingle/source/talk/base/signalthread.cc \
-	third_party/libjingle/source/talk/base/socketadapters.cc \
-	third_party/libjingle/source/talk/base/socketaddress.cc \
-	third_party/libjingle/source/talk/base/socketaddresspair.cc \
-	third_party/libjingle/source/talk/base/socketpool.cc \
-	third_party/libjingle/source/talk/base/socketstream.cc \
-	third_party/libjingle/source/talk/base/ssladapter.cc \
-	third_party/libjingle/source/talk/base/sslfingerprint.cc \
-	third_party/libjingle/source/talk/base/sslidentity.cc \
-	third_party/libjingle/source/talk/base/sslsocketfactory.cc \
-	third_party/libjingle/source/talk/base/sslstreamadapter.cc \
-	third_party/libjingle/source/talk/base/sslstreamadapterhelper.cc \
-	third_party/libjingle/source/talk/base/stream.cc \
-	third_party/libjingle/source/talk/base/stringencode.cc \
-	third_party/libjingle/source/talk/base/stringutils.cc \
-	third_party/libjingle/source/talk/base/systeminfo.cc \
-	third_party/libjingle/source/talk/base/task.cc \
-	third_party/libjingle/source/talk/base/taskparent.cc \
-	third_party/libjingle/source/talk/base/taskrunner.cc \
-	third_party/libjingle/source/talk/base/thread.cc \
-	third_party/libjingle/source/talk/base/timeutils.cc \
-	third_party/libjingle/source/talk/base/timing.cc \
-	third_party/libjingle/source/talk/base/unixfilesystem.cc \
-	third_party/libjingle/source/talk/base/urlencode.cc \
-	third_party/libjingle/source/talk/base/worker.cc \
 	third_party/libjingle/source/talk/p2p/base/asyncstuntcpsocket.cc \
 	third_party/libjingle/source/talk/p2p/base/basicpacketsocketfactory.cc \
 	third_party/libjingle/source/talk/p2p/base/dtlstransportchannel.cc \
@@ -126,13 +55,6 @@ LOCAL_SRC_FILES := \
 	third_party/libjingle/source/talk/p2p/client/basicportallocator.cc \
 	third_party/libjingle/source/talk/p2p/client/httpportallocator.cc \
 	third_party/libjingle/source/talk/p2p/client/socketmonitor.cc \
-	third_party/libjingle/source/talk/xmllite/qname.cc \
-	third_party/libjingle/source/talk/xmllite/xmlbuilder.cc \
-	third_party/libjingle/source/talk/xmllite/xmlconstants.cc \
-	third_party/libjingle/source/talk/xmllite/xmlelement.cc \
-	third_party/libjingle/source/talk/xmllite/xmlnsstack.cc \
-	third_party/libjingle/source/talk/xmllite/xmlparser.cc \
-	third_party/libjingle/source/talk/xmllite/xmlprinter.cc \
 	third_party/libjingle/source/talk/xmpp/constants.cc \
 	third_party/libjingle/source/talk/xmpp/jid.cc \
 	third_party/libjingle/source/talk/xmpp/saslmechanism.cc \
@@ -148,7 +70,6 @@ LOCAL_SRC_FILES := \
 MY_CFLAGS_Debug := \
 	-fstack-protector \
 	--param=ssp-buffer-size=4 \
-	-fno-exceptions \
 	-fno-strict-aliasing \
 	-Wno-unused-parameter \
 	-Wno-missing-field-initializers \
@@ -158,13 +79,13 @@ MY_CFLAGS_Debug := \
 	-Wno-unused-local-typedefs \
 	-Wno-format \
 	-fno-tree-sra \
+	-fno-caller-saves \
+	-Wno-psabi \
 	-fno-partial-inlining \
 	-fno-early-inlining \
 	-fno-tree-copy-prop \
 	-fno-tree-loop-optimize \
 	-fno-move-loop-invariants \
-	-fno-caller-saves \
-	-Wno-psabi \
 	-ffunction-sections \
 	-funwind-tables \
 	-g \
@@ -183,6 +104,7 @@ MY_CFLAGS_Debug := \
 	-Wno-sequence-point \
 	-Os \
 	-g \
+	-gdwarf-4 \
 	-fdata-sections \
 	-ffunction-sections \
 	-fomit-frame-pointer \
@@ -195,14 +117,14 @@ MY_DEFS_Debug := \
 	'-DHAVE_SRTP' \
 	'-DHAVE_WEBRTC_VIDEO' \
 	'-DHAVE_WEBRTC_VOICE' \
-	'-DLOGGING_INSIDE_LIBJINGLE' \
+	'-DLOGGING_INSIDE_WEBRTC' \
 	'-DNO_MAIN_THREAD_WRAPPING' \
 	'-DNO_SOUND_SYSTEM' \
 	'-DSRTP_RELATIVE_PATH' \
 	'-DUSE_WEBRTC_DEV_BRANCH' \
 	'-DENABLE_EXTERNAL_AUTH' \
+	'-DWEBRTC_CHROMIUM_BUILD' \
 	'-DV8_DEPRECATION_WARNINGS' \
-	'-DBLINK_SCALE_FILTERS_AT_RECORD_TIME' \
 	'-D_FILE_OFFSET_BITS=64' \
 	'-DNO_TCMALLOC' \
 	'-DDISABLE_NACL' \
@@ -210,6 +132,7 @@ MY_DEFS_Debug := \
 	'-DSSL_USE_OPENSSL' \
 	'-DHAVE_OPENSSL_SSL_H' \
 	'-DPOSIX' \
+	'-DWEBRTC_POSIX' \
 	'-DCHROMIUM_BUILD' \
 	'-DUSE_LIBJPEG_TURBO=1' \
 	'-DENABLE_WEBRTC=1' \
@@ -223,12 +146,18 @@ MY_DEFS_Debug := \
 	'-DENABLE_PRINTING=1' \
 	'-DENABLE_MANAGED_USERS=1' \
 	'-DDATA_REDUCTION_FALLBACK_HOST="http://compress.googlezip.net:80/"' \
-	'-DDATA_REDUCTION_DEV_HOST="http://proxy-dev.googlezip.net:80/"' \
+	'-DDATA_REDUCTION_DEV_HOST="https://proxy-dev.googlezip.net:443/"' \
+	'-DDATA_REDUCTION_DEV_FALLBACK_HOST="http://proxy-dev.googlezip.net:80/"' \
 	'-DSPDY_PROXY_AUTH_ORIGIN="https://proxy.googlezip.net:443/"' \
 	'-DDATA_REDUCTION_PROXY_PROBE_URL="http://check.googlezip.net/connect"' \
 	'-DDATA_REDUCTION_PROXY_WARMUP_URL="http://www.gstatic.com/generate_204"' \
 	'-DVIDEO_HOLE=1' \
+	'-DENABLE_LOAD_COMPLETION_HACKS=1' \
 	'-DPOSIX_AVOID_MMAP' \
+	'-DXML_STATIC' \
+	'-DWEBRTC_LINUX' \
+	'-DWEBRTC_ANDROID' \
+	'-DWEBRTC_ANDROID_OPENSLES' \
 	'-DFEATURE_ENABLE_VOICEMAIL' \
 	'-DANDROID' \
 	'-DUSE_OPENSSL=1' \
@@ -246,19 +175,19 @@ MY_DEFS_Debug := \
 LOCAL_C_INCLUDES_Debug := \
 	$(gyp_shared_intermediate_dir)/shim_headers/icuuc/target \
 	$(gyp_shared_intermediate_dir)/shim_headers/icui18n/target \
-	$(gyp_shared_intermediate_dir)/shim_headers/ashmem/target \
 	$(LOCAL_PATH)/third_party/libjingle/overrides \
-	$(LOCAL_PATH)/third_party/libjingle/source \
 	$(LOCAL_PATH)/third_party/webrtc/overrides \
+	$(LOCAL_PATH)/third_party/libjingle/source \
 	$(LOCAL_PATH) \
 	$(LOCAL_PATH)/testing/gtest/include \
 	$(LOCAL_PATH)/third_party \
 	$(LOCAL_PATH)/third_party/libyuv/include \
 	$(LOCAL_PATH)/third_party/usrsctp \
-	$(LOCAL_PATH)/third_party/webrtc \
 	$(gyp_shared_intermediate_dir) \
-	$(PWD)/external/expat/lib \
-	$(LOCAL_PATH)/third_party/openssl/openssl/include \
+	$(LOCAL_PATH)/third_party/expat/files/lib \
+	$(LOCAL_PATH)/third_party/boringssl/src/include \
+	$(LOCAL_PATH)/third_party/webrtc/overrides \
+	$(LOCAL_PATH)/third_party \
 	$(PWD)/frameworks/wilhelm/include \
 	$(PWD)/bionic \
 	$(PWD)/external/stlport/stlport
@@ -266,23 +195,24 @@ LOCAL_C_INCLUDES_Debug := \
 
 # Flags passed to only C++ (and not C) files.
 LOCAL_CPPFLAGS_Debug := \
+	-fno-exceptions \
 	-fno-rtti \
 	-fno-threadsafe-statics \
 	-fvisibility-inlines-hidden \
 	-Wno-deprecated \
 	-Wno-abi \
+	-std=gnu++11 \
+	-Wno-narrowing \
+	-Wno-literal-suffix \
 	-Wno-non-virtual-dtor \
 	-Wno-sign-promo \
 	-Wno-non-virtual-dtor
 
 
-LOCAL_FDO_SUPPORT_Debug := false
-
 # Flags passed to both C and C++ files.
 MY_CFLAGS_Release := \
 	-fstack-protector \
 	--param=ssp-buffer-size=4 \
-	-fno-exceptions \
 	-fno-strict-aliasing \
 	-Wno-unused-parameter \
 	-Wno-missing-field-initializers \
@@ -292,13 +222,13 @@ MY_CFLAGS_Release := \
 	-Wno-unused-local-typedefs \
 	-Wno-format \
 	-fno-tree-sra \
+	-fno-caller-saves \
+	-Wno-psabi \
 	-fno-partial-inlining \
 	-fno-early-inlining \
 	-fno-tree-copy-prop \
 	-fno-tree-loop-optimize \
 	-fno-move-loop-invariants \
-	-fno-caller-saves \
-	-Wno-psabi \
 	-ffunction-sections \
 	-funwind-tables \
 	-g \
@@ -329,14 +259,14 @@ MY_DEFS_Release := \
 	'-DHAVE_SRTP' \
 	'-DHAVE_WEBRTC_VIDEO' \
 	'-DHAVE_WEBRTC_VOICE' \
-	'-DLOGGING_INSIDE_LIBJINGLE' \
+	'-DLOGGING_INSIDE_WEBRTC' \
 	'-DNO_MAIN_THREAD_WRAPPING' \
 	'-DNO_SOUND_SYSTEM' \
 	'-DSRTP_RELATIVE_PATH' \
 	'-DUSE_WEBRTC_DEV_BRANCH' \
 	'-DENABLE_EXTERNAL_AUTH' \
+	'-DWEBRTC_CHROMIUM_BUILD' \
 	'-DV8_DEPRECATION_WARNINGS' \
-	'-DBLINK_SCALE_FILTERS_AT_RECORD_TIME' \
 	'-D_FILE_OFFSET_BITS=64' \
 	'-DNO_TCMALLOC' \
 	'-DDISABLE_NACL' \
@@ -344,6 +274,7 @@ MY_DEFS_Release := \
 	'-DSSL_USE_OPENSSL' \
 	'-DHAVE_OPENSSL_SSL_H' \
 	'-DPOSIX' \
+	'-DWEBRTC_POSIX' \
 	'-DCHROMIUM_BUILD' \
 	'-DUSE_LIBJPEG_TURBO=1' \
 	'-DENABLE_WEBRTC=1' \
@@ -357,12 +288,18 @@ MY_DEFS_Release := \
 	'-DENABLE_PRINTING=1' \
 	'-DENABLE_MANAGED_USERS=1' \
 	'-DDATA_REDUCTION_FALLBACK_HOST="http://compress.googlezip.net:80/"' \
-	'-DDATA_REDUCTION_DEV_HOST="http://proxy-dev.googlezip.net:80/"' \
+	'-DDATA_REDUCTION_DEV_HOST="https://proxy-dev.googlezip.net:443/"' \
+	'-DDATA_REDUCTION_DEV_FALLBACK_HOST="http://proxy-dev.googlezip.net:80/"' \
 	'-DSPDY_PROXY_AUTH_ORIGIN="https://proxy.googlezip.net:443/"' \
 	'-DDATA_REDUCTION_PROXY_PROBE_URL="http://check.googlezip.net/connect"' \
 	'-DDATA_REDUCTION_PROXY_WARMUP_URL="http://www.gstatic.com/generate_204"' \
 	'-DVIDEO_HOLE=1' \
+	'-DENABLE_LOAD_COMPLETION_HACKS=1' \
 	'-DPOSIX_AVOID_MMAP' \
+	'-DXML_STATIC' \
+	'-DWEBRTC_LINUX' \
+	'-DWEBRTC_ANDROID' \
+	'-DWEBRTC_ANDROID_OPENSLES' \
 	'-DFEATURE_ENABLE_VOICEMAIL' \
 	'-DANDROID' \
 	'-DUSE_OPENSSL=1' \
@@ -380,19 +317,19 @@ MY_DEFS_Release := \
 LOCAL_C_INCLUDES_Release := \
 	$(gyp_shared_intermediate_dir)/shim_headers/icuuc/target \
 	$(gyp_shared_intermediate_dir)/shim_headers/icui18n/target \
-	$(gyp_shared_intermediate_dir)/shim_headers/ashmem/target \
 	$(LOCAL_PATH)/third_party/libjingle/overrides \
-	$(LOCAL_PATH)/third_party/libjingle/source \
 	$(LOCAL_PATH)/third_party/webrtc/overrides \
+	$(LOCAL_PATH)/third_party/libjingle/source \
 	$(LOCAL_PATH) \
 	$(LOCAL_PATH)/testing/gtest/include \
 	$(LOCAL_PATH)/third_party \
 	$(LOCAL_PATH)/third_party/libyuv/include \
 	$(LOCAL_PATH)/third_party/usrsctp \
-	$(LOCAL_PATH)/third_party/webrtc \
 	$(gyp_shared_intermediate_dir) \
-	$(PWD)/external/expat/lib \
-	$(LOCAL_PATH)/third_party/openssl/openssl/include \
+	$(LOCAL_PATH)/third_party/expat/files/lib \
+	$(LOCAL_PATH)/third_party/boringssl/src/include \
+	$(LOCAL_PATH)/third_party/webrtc/overrides \
+	$(LOCAL_PATH)/third_party \
 	$(PWD)/frameworks/wilhelm/include \
 	$(PWD)/bionic \
 	$(PWD)/external/stlport/stlport
@@ -400,68 +337,25 @@ LOCAL_C_INCLUDES_Release := \
 
 # Flags passed to only C++ (and not C) files.
 LOCAL_CPPFLAGS_Release := \
+	-fno-exceptions \
 	-fno-rtti \
 	-fno-threadsafe-statics \
 	-fvisibility-inlines-hidden \
 	-Wno-deprecated \
 	-Wno-abi \
+	-std=gnu++11 \
+	-Wno-narrowing \
+	-Wno-literal-suffix \
 	-Wno-non-virtual-dtor \
 	-Wno-sign-promo \
 	-Wno-non-virtual-dtor
 
 
-LOCAL_FDO_SUPPORT_Release := false
-
 LOCAL_CFLAGS := $(MY_CFLAGS_$(GYP_CONFIGURATION)) $(MY_DEFS_$(GYP_CONFIGURATION))
-LOCAL_FDO_SUPPORT := $(LOCAL_FDO_SUPPORT_$(GYP_CONFIGURATION))
 LOCAL_C_INCLUDES := $(GYP_COPIED_SOURCE_ORIGIN_DIRS) $(LOCAL_C_INCLUDES_$(GYP_CONFIGURATION))
 LOCAL_CPPFLAGS := $(LOCAL_CPPFLAGS_$(GYP_CONFIGURATION))
 LOCAL_ASFLAGS := $(LOCAL_CFLAGS)
 ### Rules for final target.
-
-LOCAL_LDFLAGS_Debug := \
-	-Wl,-z,now \
-	-Wl,-z,relro \
-	-Wl,--fatal-warnings \
-	-Wl,-z,noexecstack \
-	-fPIC \
-	-Wl,-z,relro \
-	-Wl,-z,now \
-	-fuse-ld=gold \
-	-nostdlib \
-	-Wl,--no-undefined \
-	-Wl,--exclude-libs=ALL \
-	-Wl,--icf=safe \
-	-Wl,--warn-shared-textrel \
-	-Wl,-O1 \
-	-Wl,--as-needed
-
-
-LOCAL_LDFLAGS_Release := \
-	-Wl,-z,now \
-	-Wl,-z,relro \
-	-Wl,--fatal-warnings \
-	-Wl,-z,noexecstack \
-	-fPIC \
-	-Wl,-z,relro \
-	-Wl,-z,now \
-	-fuse-ld=gold \
-	-nostdlib \
-	-Wl,--no-undefined \
-	-Wl,--exclude-libs=ALL \
-	-Wl,--icf=safe \
-	-Wl,-O1 \
-	-Wl,--as-needed \
-	-Wl,--gc-sections \
-	-Wl,--warn-shared-textrel
-
-
-LOCAL_LDFLAGS := $(LOCAL_LDFLAGS_$(GYP_CONFIGURATION))
-
-LOCAL_STATIC_LIBRARIES :=
-
-# Enable grouping to fix circular references
-LOCAL_GROUP_STATIC_LIBRARIES := true
 
 LOCAL_SHARED_LIBRARIES := \
 	libstlport \

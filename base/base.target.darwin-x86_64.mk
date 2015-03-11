@@ -5,7 +5,6 @@ include $(CLEAR_VARS)
 LOCAL_MODULE_CLASS := STATIC_LIBRARIES
 LOCAL_MODULE := base_base_gyp
 LOCAL_MODULE_SUFFIX := .a
-LOCAL_MODULE_TAGS := optional
 LOCAL_MODULE_TARGET_ARCH := $(TARGET_$(GYP_VAR_PREFIX)ARCH)
 gyp_intermediate_dir := $(call local-intermediates-dir,,$(GYP_VAR_PREFIX))
 gyp_shared_intermediate_dir := $(call intermediates-dir-for,GYP,shared,,,$(GYP_VAR_PREFIX))
@@ -13,8 +12,7 @@ gyp_shared_intermediate_dir := $(call intermediates-dir-for,GYP,shared,,,$(GYP_V
 # Make sure our deps are built first.
 GYP_TARGET_DEPENDENCIES := \
 	$(call intermediates-dir-for,GYP,testing_gtest_prod_gyp,,,$(GYP_VAR_PREFIX))/gtest_prod.stamp \
-	$(call intermediates-dir-for,GYP,base_base_jni_headers_gyp,,,$(GYP_VAR_PREFIX))/base_jni_headers.stamp \
-	$(call intermediates-dir-for,GYP,third_party_ashmem_ashmem_gyp,,,$(GYP_VAR_PREFIX))/ashmem.stamp
+	$(call intermediates-dir-for,GYP,base_base_jni_headers_gyp,,,$(GYP_VAR_PREFIX))/base_jni_headers.stamp
 
 GYP_GENERATED_OUTPUTS :=
 
@@ -49,6 +47,7 @@ LOCAL_SRC_FILES := \
 	base/android/content_uri_utils.cc \
 	base/android/cpu_features.cc \
 	base/android/event_log.cc \
+	base/android/field_trial_list.cc \
 	base/android/fifo_utils.cc \
 	base/android/important_file_writer_android.cc \
 	base/android/scoped_java_ref.cc \
@@ -88,7 +87,9 @@ LOCAL_SRC_FILES := \
 	base/debug/profiler.cc \
 	base/debug/stack_trace.cc \
 	base/debug/stack_trace_android.cc \
+	base/debug/task_annotator.cc \
 	base/debug/trace_event_android.cc \
+	base/debug/trace_event_argument.cc \
 	base/debug/trace_event_impl.cc \
 	base/debug/trace_event_impl_constants.cc \
 	base/debug/trace_event_synthetic_delay.cc \
@@ -96,9 +97,6 @@ LOCAL_SRC_FILES := \
 	base/debug/trace_event_memory.cc \
 	base/deferred_sequenced_task_runner.cc \
 	base/environment.cc \
-	base/file_util.cc \
-	base/file_util_android.cc \
-	base/file_util_posix.cc \
 	base/files/file.cc \
 	base/files/file_enumerator.cc \
 	base/files/file_enumerator_posix.cc \
@@ -108,17 +106,18 @@ LOCAL_SRC_FILES := \
 	base/files/file_path_watcher_linux.cc \
 	base/files/file_posix.cc \
 	base/files/file_proxy.cc \
+	base/files/file_util.cc \
+	base/files/file_util_android.cc \
+	base/files/file_util_posix.cc \
 	base/files/file_util_proxy.cc \
 	base/files/important_file_writer.cc \
 	base/files/memory_mapped_file.cc \
 	base/files/memory_mapped_file_posix.cc \
 	base/files/scoped_file.cc \
-	base/files/scoped_platform_file_closer.cc \
 	base/files/scoped_temp_dir.cc \
 	base/guid.cc \
 	base/guid_posix.cc \
 	base/hash.cc \
-	base/ini_parser.cc \
 	base/json/json_file_value_serializer.cc \
 	base/json/json_parser.cc \
 	base/json/json_reader.cc \
@@ -166,8 +165,6 @@ LOCAL_SRC_FILES := \
 	base/path_service.cc \
 	base/pending_task.cc \
 	base/pickle.cc \
-	base/platform_file.cc \
-	base/platform_file_posix.cc \
 	base/posix/global_descriptors.cc \
 	base/posix/unix_domain_socket_linux.cc \
 	base/power_monitor/power_monitor.cc \
@@ -272,7 +269,6 @@ MY_CFLAGS_Debug := \
 	-fstack-protector \
 	--param=ssp-buffer-size=4 \
 	-Werror \
-	-fno-exceptions \
 	-fno-strict-aliasing \
 	-Wall \
 	-Wno-unused-parameter \
@@ -297,6 +293,7 @@ MY_CFLAGS_Debug := \
 	-Wno-unused-but-set-variable \
 	-Os \
 	-g \
+	-gdwarf-4 \
 	-fdata-sections \
 	-ffunction-sections \
 	-fomit-frame-pointer \
@@ -304,7 +301,6 @@ MY_CFLAGS_Debug := \
 
 MY_DEFS_Debug := \
 	'-DV8_DEPRECATION_WARNINGS' \
-	'-DBLINK_SCALE_FILTERS_AT_RECORD_TIME' \
 	'-D_FILE_OFFSET_BITS=64' \
 	'-DNO_TCMALLOC' \
 	'-DDISABLE_NACL' \
@@ -321,11 +317,13 @@ MY_DEFS_Debug := \
 	'-DENABLE_PRINTING=1' \
 	'-DENABLE_MANAGED_USERS=1' \
 	'-DDATA_REDUCTION_FALLBACK_HOST="http://compress.googlezip.net:80/"' \
-	'-DDATA_REDUCTION_DEV_HOST="http://proxy-dev.googlezip.net:80/"' \
+	'-DDATA_REDUCTION_DEV_HOST="https://proxy-dev.googlezip.net:443/"' \
+	'-DDATA_REDUCTION_DEV_FALLBACK_HOST="http://proxy-dev.googlezip.net:80/"' \
 	'-DSPDY_PROXY_AUTH_ORIGIN="https://proxy.googlezip.net:443/"' \
 	'-DDATA_REDUCTION_PROXY_PROBE_URL="http://check.googlezip.net/connect"' \
 	'-DDATA_REDUCTION_PROXY_WARMUP_URL="http://www.gstatic.com/generate_204"' \
 	'-DVIDEO_HOLE=1' \
+	'-DENABLE_LOAD_COMPLETION_HACKS=1' \
 	'-DUSE_OPENSSL=1' \
 	'-DUSE_OPENSSL_CERTS=1' \
 	'-D__STDC_CONSTANT_MACROS' \
@@ -344,7 +342,6 @@ MY_DEFS_Debug := \
 
 # Include paths placed before CFLAGS/CPPFLAGS
 LOCAL_C_INCLUDES_Debug := \
-	$(gyp_shared_intermediate_dir)/shim_headers/ashmem/target \
 	$(gyp_shared_intermediate_dir) \
 	$(gyp_shared_intermediate_dir)/base \
 	$(LOCAL_PATH) \
@@ -355,22 +352,23 @@ LOCAL_C_INCLUDES_Debug := \
 
 # Flags passed to only C++ (and not C) files.
 LOCAL_CPPFLAGS_Debug := \
+	-fno-exceptions \
 	-fno-rtti \
 	-fno-threadsafe-statics \
 	-fvisibility-inlines-hidden \
 	-Wsign-compare \
+	-std=gnu++11 \
+	-Wno-narrowing \
+	-Wno-literal-suffix \
 	-Wno-non-virtual-dtor \
 	-Wno-sign-promo
 
-
-LOCAL_FDO_SUPPORT_Debug := false
 
 # Flags passed to both C and C++ files.
 MY_CFLAGS_Release := \
 	-fstack-protector \
 	--param=ssp-buffer-size=4 \
 	-Werror \
-	-fno-exceptions \
 	-fno-strict-aliasing \
 	-Wall \
 	-Wno-unused-parameter \
@@ -393,16 +391,15 @@ MY_CFLAGS_Release := \
 	-Wno-ignored-qualifiers \
 	-Wno-type-limits \
 	-Wno-unused-but-set-variable \
-	-Os \
 	-fno-ident \
 	-fdata-sections \
 	-ffunction-sections \
 	-fomit-frame-pointer \
-	-funwind-tables
+	-funwind-tables \
+	-O2
 
 MY_DEFS_Release := \
 	'-DV8_DEPRECATION_WARNINGS' \
-	'-DBLINK_SCALE_FILTERS_AT_RECORD_TIME' \
 	'-D_FILE_OFFSET_BITS=64' \
 	'-DNO_TCMALLOC' \
 	'-DDISABLE_NACL' \
@@ -419,11 +416,13 @@ MY_DEFS_Release := \
 	'-DENABLE_PRINTING=1' \
 	'-DENABLE_MANAGED_USERS=1' \
 	'-DDATA_REDUCTION_FALLBACK_HOST="http://compress.googlezip.net:80/"' \
-	'-DDATA_REDUCTION_DEV_HOST="http://proxy-dev.googlezip.net:80/"' \
+	'-DDATA_REDUCTION_DEV_HOST="https://proxy-dev.googlezip.net:443/"' \
+	'-DDATA_REDUCTION_DEV_FALLBACK_HOST="http://proxy-dev.googlezip.net:80/"' \
 	'-DSPDY_PROXY_AUTH_ORIGIN="https://proxy.googlezip.net:443/"' \
 	'-DDATA_REDUCTION_PROXY_PROBE_URL="http://check.googlezip.net/connect"' \
 	'-DDATA_REDUCTION_PROXY_WARMUP_URL="http://www.gstatic.com/generate_204"' \
 	'-DVIDEO_HOLE=1' \
+	'-DENABLE_LOAD_COMPLETION_HACKS=1' \
 	'-DUSE_OPENSSL=1' \
 	'-DUSE_OPENSSL_CERTS=1' \
 	'-D__STDC_CONSTANT_MACROS' \
@@ -443,7 +442,6 @@ MY_DEFS_Release := \
 
 # Include paths placed before CFLAGS/CPPFLAGS
 LOCAL_C_INCLUDES_Release := \
-	$(gyp_shared_intermediate_dir)/shim_headers/ashmem/target \
 	$(gyp_shared_intermediate_dir) \
 	$(gyp_shared_intermediate_dir)/base \
 	$(LOCAL_PATH) \
@@ -454,57 +452,23 @@ LOCAL_C_INCLUDES_Release := \
 
 # Flags passed to only C++ (and not C) files.
 LOCAL_CPPFLAGS_Release := \
+	-fno-exceptions \
 	-fno-rtti \
 	-fno-threadsafe-statics \
 	-fvisibility-inlines-hidden \
 	-Wsign-compare \
+	-std=gnu++11 \
+	-Wno-narrowing \
+	-Wno-literal-suffix \
 	-Wno-non-virtual-dtor \
 	-Wno-sign-promo
 
 
-LOCAL_FDO_SUPPORT_Release := false
-
 LOCAL_CFLAGS := $(MY_CFLAGS_$(GYP_CONFIGURATION)) $(MY_DEFS_$(GYP_CONFIGURATION))
-LOCAL_FDO_SUPPORT := $(LOCAL_FDO_SUPPORT_$(GYP_CONFIGURATION))
 LOCAL_C_INCLUDES := $(GYP_COPIED_SOURCE_ORIGIN_DIRS) $(LOCAL_C_INCLUDES_$(GYP_CONFIGURATION))
 LOCAL_CPPFLAGS := $(LOCAL_CPPFLAGS_$(GYP_CONFIGURATION))
 LOCAL_ASFLAGS := $(LOCAL_CFLAGS)
 ### Rules for final target.
-
-LOCAL_LDFLAGS_Debug := \
-	-Wl,-z,now \
-	-Wl,-z,relro \
-	-Wl,--fatal-warnings \
-	-Wl,-z,noexecstack \
-	-fPIC \
-	-m64 \
-	-fuse-ld=gold \
-	-nostdlib \
-	-Wl,--no-undefined \
-	-Wl,--exclude-libs=ALL \
-	-Wl,--warn-shared-textrel \
-	-Wl,-O1 \
-	-Wl,--as-needed
-
-
-LOCAL_LDFLAGS_Release := \
-	-Wl,-z,now \
-	-Wl,-z,relro \
-	-Wl,--fatal-warnings \
-	-Wl,-z,noexecstack \
-	-fPIC \
-	-m64 \
-	-fuse-ld=gold \
-	-nostdlib \
-	-Wl,--no-undefined \
-	-Wl,--exclude-libs=ALL \
-	-Wl,-O1 \
-	-Wl,--as-needed \
-	-Wl,--gc-sections \
-	-Wl,--warn-shared-textrel
-
-
-LOCAL_LDFLAGS := $(LOCAL_LDFLAGS_$(GYP_CONFIGURATION))
 
 LOCAL_STATIC_LIBRARIES := \
 	cpufeatures
